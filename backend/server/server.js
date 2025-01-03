@@ -1,11 +1,11 @@
 import { createServer } from "http";
+import router from './router.js'
 
 const port = process.env.PORT || 3001;
 const hostname = process.env.HOSTNAME || 'localhost';
 
 const server = createServer((req, res) => {
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify('gotta'));
+    router(req, res)
 });
 
 server.listen(port, hostname, () => {
