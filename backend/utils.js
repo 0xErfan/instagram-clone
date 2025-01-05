@@ -1,13 +1,12 @@
 const isUrlSegmentEqual = (url, str, index = 1) => url.split('/')?.[index] === str;
 
 const notFoundRoute = (res, msg = undefined) => {
-    res.writeHead(404, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ message: msg ?? 'Route not found buddy.' }));
+    sendResponse(res, 404, msg ?? 'Route not found buddy.')
 };
 
 const getReqBody = async req => {
 
-    return new Promise((res, rej) => {
+    return new Promise((resolve, reject) => {
 
         let body = '';
 
@@ -17,9 +16,10 @@ const getReqBody = async req => {
 
         req.on('end', () => {
             try {
-                res(JSON.parse(body))
+                const parsedBody = JSON.parse(body)
+                resolve(parsedBody)
             } catch (err) {
-                rej(new Error('Invalid JSON'))
+                reject(new Error(`Invalid JSON, ${err}`))
             }
         })
 
@@ -27,8 +27,24 @@ const getReqBody = async req => {
 
 }
 
+const sendResponse = (res, statusCode, data) => {
+
+    let responseBody;
+
+    if (typeof data === 'object') {
+        res.writeHead(statusCode, { 'Content-Type': 'application/json' });
+        responseBody = JSON.stringify(data);
+    } else {
+        res.writeHead(statusCode, { 'Content-Type': 'text/plain' });
+        responseBody = data;
+    }
+
+    res.end(responseBody);
+};
+
 export {
     isUrlSegmentEqual,
     notFoundRoute,
     getReqBody,
+    sendResponse,
 }

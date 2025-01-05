@@ -1,5 +1,5 @@
 import { isUrlSegmentEqual, notFoundRoute } from "../utils.js";
-import { banUser, createUser, getUsers } from '../controllers/userController.js'
+import { banUser, createUser, findUser } from '../controllers/userController.js'
 
 const userRoute = (req, res) => {
 
@@ -7,7 +7,7 @@ const userRoute = (req, res) => {
 
     if (isUrlSegmentEqual(url, 'ban', 2)) return banUser(req, res)
     if (isUrlSegmentEqual(url, 'create', 2)) return createUser(req, res)
-    if (isUrlSegmentEqual(url, 'get', 2)) return getUsers(req, res)
+    if (isUrlSegmentEqual(url, 'get', 2)) return findUser(req, res)
 
     notFoundRoute(res)
 };
