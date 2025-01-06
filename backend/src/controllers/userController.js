@@ -1,8 +1,12 @@
-import connectToDb from '../configs/db.js'
-import userModel from '../models/User.js'
-import { getReqBody, sendResponse } from '../utils.js'
+const connectToDb = require('../configs/db.js')
+const userModel = require('../models/User.js')
+const { getReqBody, sendResponse } = require('../../dist/utils.js');
 
-await connectToDb()
+(
+    async () => {
+        await connectToDb()
+    }
+)();
 
 const createUser = async (req, res) => {
 
@@ -11,7 +15,7 @@ const createUser = async (req, res) => {
     try {
         const userData = await getReqBody(req)
         await userModel.create(userData)
-        sendResponse(res, 201, 'Work done btw.')
+        sendResponse(res, 201, { message: 'Work done btw.' })
     } catch (error) {
         sendResponse(res, 500, error)
     }
@@ -36,6 +40,6 @@ const banUser = async (req, res) => {
     res.end(`user ${2} got banned haha.`)
 }
 
-export {
+module.exports = {
     createUser, findUser, banUser
 }

@@ -1,5 +1,5 @@
-import { config } from 'dotenv'
-import mongoose from "mongoose";
+const { config } = require('dotenv')
+const mongoose = require("mongoose")
 
 config()
 
@@ -11,4 +11,4 @@ const connectToDB = async () => {
     } catch (err) { console.log('Failed to connect => ', err) }
 }
 
-export default connectToDB;
+module.exports = connectToDB;

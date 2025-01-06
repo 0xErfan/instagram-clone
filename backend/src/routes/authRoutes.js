@@ -3,4 +3,4 @@ const authRoutes = (req, res) => {
     res.end('got the auth route here hahha')
 };
 
-export default authRoutes;
+module.exports = authRoutes;

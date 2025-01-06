@@ -1,5 +1,5 @@
-import { isUrlSegmentEqual, notFoundRoute } from "../utils.js";
-import { banUser, createUser, findUser } from '../controllers/userController.js'
+const { isUrlSegmentEqual, notFoundRoute } = require("../../dist/utils.js")
+const { banUser, createUser, findUser } = require('../controllers/userController.js')
 
 const userRoute = (req, res) => {
 
@@ -12,4 +12,4 @@ const userRoute = (req, res) => {
     notFoundRoute(res)
 };
 
-export default userRoute;
+module.exports = userRoute;

@@ -1,6 +1,7 @@
-import mongoose, { Schema } from "mongoose"
+const mongoose = require("mongoose");
+const { Schema } = mongoose;
 
-export const schema = new Schema({
+const schema = new Schema({
     name: { type: String, required: true, minLength: 3, maxLength: 20 },
     lastName: { type: String, default: '', maxLength: 20 },
     username: { type: String, required: true, minLength: 3, maxLength: 20, unique: true },
@@ -11,4 +12,4 @@ export const schema = new Schema({
 }, { timestamps: true })
 
 const UserModel = mongoose.models.User || mongoose.model('User', schema);
-export default UserModel;
+module.exports = UserModel;

@@ -2,13 +2,12 @@
   "name": "instagram-clone",
   "private": true,
   "version": "0.0.0",
-  "type": "module",
   "scripts": {
     "dev": "concurrently \"vite\" \"npx tailwindcss -i ./src/styles/tailwindCss/input.css -o ./src/styles/tailwindCss/output.css --watch\"",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "server": "nodemon ./backend/server/server.js"
+    "server": "concurrently \"nodemon ./backend/src/server/server.js\" \"tsc --watch\""
   },
   "dependencies": {
     "dotenv": "^16.4.7",
@@ -31,6 +30,7 @@
     "nodemon": "^3.1.9",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.17",
+    "ts-node": "^10.9.2",
     "typescript": "~5.6.2",
     "typescript-eslint": "^8.18.2",
     "vite": "^6.0.5"
