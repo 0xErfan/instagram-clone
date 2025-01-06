@@ -1,7 +1,9 @@
-const userRoutes = require('../routes/userRoutes.js')
+import { IncomingMessage, ServerResponse } from "http";
+
+const userRoutes = require('../../dist/routes/userRoutes.js')
 const { notFoundRoute, isUrlSegmentEqual } = require('../../dist/utils.js')
 
-const router = (req, res) => {
+const router = (req: IncomingMessage, res: ServerResponse) => {
 
     const { url } = req;
 

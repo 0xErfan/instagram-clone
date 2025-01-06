@@ -1,7 +1,9 @@
+import { IncomingMessage, ServerResponse } from "http";
+
 const { isUrlSegmentEqual, notFoundRoute } = require("../../dist/utils.js")
 const { banUser, createUser, findUser } = require('../controllers/userController.js')
 
-const userRoute = (req, res) => {
+const userRoute = (req: IncomingMessage, res: ServerResponse) => {
 
     const { url } = req
 

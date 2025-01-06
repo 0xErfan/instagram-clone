@@ -4,10 +4,11 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "concurrently \"vite\" \"npx tailwindcss -i ./src/styles/tailwindCss/input.css -o ./src/styles/tailwindCss/output.css --watch\"",
+    "dev:backend": "tsc --watch",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "server": "concurrently \"nodemon ./backend/src/server/server.js\" \"tsc --watch\""
+    "server": "nodemon ./backend/dist/server/server.js"
   },
   "dependencies": {
     "dotenv": "^16.4.7",
