@@ -1,14 +1,13 @@
 import { IncomingMessage, ServerResponse } from "http";
 
-const userRoutes = require('../../dist/routes/userRoutes.js')
-const { notFoundRoute, isUrlSegmentEqual } = require('../../dist/utils.js')
+const userRoutes = require('../../src/routes/userRoutes')
+const { notFoundRoute, isUrlSegmentEqual } = require('../../src/utils')
 
 const router = (req: IncomingMessage, res: ServerResponse) => {
 
     const { url } = req;
 
     if (isUrlSegmentEqual(url, 'users')) return userRoutes(req, res);
-    // if (isUrlSegmentEqual(url, 'auth')) return authRoutes(req, res);
 
     notFoundRoute(res)
 
