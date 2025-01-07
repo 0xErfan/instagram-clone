@@ -44,9 +44,46 @@ const sendResponse = (res: typeof ServerResponse, statusCode: number, data: obje
     res.end(responseBody);
 };
 
+const isAllKeysFilled = (obj: object): boolean => {
+
+    if (obj == null || typeof obj !== 'object') return true;
+
+    return Object.values(obj).every((val) => {
+        if (val !== null && typeof val === 'object') {
+            return isAllKeysFilled(val);
+        } else {
+            return val !== null && val.toString().trim().length > 0;
+        }
+    });
+
+};
+
+const useCookie = (res: typeof ServerResponse, status = 200) => {
+    return {
+        set: (tokenName: string, tokenValue: string, httpOnly = true, expiration: number, path = '/') => {
+            res.writeHead(status, {
+                'Set-Cookie': `${tokenName}=${JSON.stringify(tokenValue)};${httpOnly && 'httpOnly;'}Max-Age=${expiration};Path=${path}`
+            })
+        },
+        get: (cookie: string, cookieName: string) => {
+            const cookieTarget = cookie.toString().split(';').find(cc => {
+                return cc.split('=')[0] == cookieName
+            })
+            return cookieTarget;
+        },
+        delete: (name: string) => {
+            res.writeHead(200, {
+                'Set-Cookie': `${name}=; HttpOnly; Max-Age=0; Path=/`
+            });
+        }
+    }
+}
+
 export {
     isUrlSegmentEqual,
     notFoundRoute,
     getReqBody,
     sendResponse,
+    isAllKeysFilled,
+    useCookie,
 }

@@ -1,7 +1,7 @@
 import { IncomingMessage, ServerResponse } from "http";
 
 const { createServer } = require('http');
-const router = require('../../src/server/router')
+const router = require('../server/router')
 
 const port = process.env.PORT || 3001;
 const hostname = process.env.HOSTNAME || 'localhost';
