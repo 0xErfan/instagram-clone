@@ -1,57 +1,75 @@
 import { IncomingMessage, ServerResponse } from "http"
-import { getReqBody, sendResponse, isAllKeysFilled, useCookie } from "../utils"
+import { getReqBody, sendResponse, isAllKeysFilled, useCookie, hashPassword, decryptToken, encryptToken, comparePassword } from "../utils"
 
 const UserModel = require('../models/User')
 
-const login = async (req: IncomingMessage, res: ServerResponse) => {
+const logIn = async (req: IncomingMessage, res: ServerResponse) => {
 
     if (req.method !== 'POST') return sendResponse(res, 400, 'Not acceptable method')
 
     try {
 
-        // TODO: add type safety
+        // TODO: add type safety.
+        // TODO: login with phone number btw.
+
+        const { set, remove } = useCookie(res, 200)
+
         const credentials = await getReqBody(req)
-        const { phone, username } = credentials as any;
+        const { phone, username, password } = credentials as any;
 
-        const user_data = await UserModel.findOne({ $or: [{ phone }, { username }] })
+        const userData = await UserModel.findOne({ $or: [{ phone }, { username }] })
+        if (!userData) return sendResponse(res, 400, { message: 'No user found with this credentials.' });
 
-        if (!user_data) sendResponse(res, 400, 'No user found, please signup.')
+        const isPasswordTrue = await comparePassword(password, userData.password)
 
-        sendResponse(res, 200, 'Gotta, here your token buddy')
+        if (!isPasswordTrue) {
+            remove('token')
+            res.end(JSON.stringify({ message: 'Wrong password buddy.' }))
+            return;
+        }
+
+        const tokenPayloadData = { _id: userData._id, phone: userData.phone, username: userData.username }
+        const encryptedToken = await encryptToken(tokenPayloadData)
+
+        set('token', encryptedToken)
+        res.end(JSON.stringify({ message: 'LoggedIn successfully.' }))
 
     } catch (error) {
-        sendResponse(res, 500, error!)
+        res.end({ message: error! })
     }
 
 }
 
 const signUp = async (req: IncomingMessage, res: ServerResponse) => {
 
-    if (req.method !== 'POST') return sendResponse(res, 404, 'Method not supported')
+    if (req.method !== 'POST') return sendResponse(res, 404, { message: 'Method not supported' })
 
     try {
 
         const data = await getReqBody(req)
 
         if (!isAllKeysFilled(data!)) {
-            sendResponse(res, 404, 'Please fill all needed data')
+            sendResponse(res, 404, { message: 'Please fill all needed data' })
             return
         }
 
-        const { phone, email, username } = data as any
+        const { phone, email, username, password } = data as any
 
         const isUserExist = await UserModel.findOne({ $or: [{ username }, { phone }] }) // or email
 
         if (isUserExist) {
-            sendResponse(res, 404, `${phone || email || username} is taken by others`)
+            sendResponse(res, 404, { message: `${phone || email || username} is taken by others` })
             return
         }
 
-        const userData = await UserModel.create(data)
-        const { set, delete: delCoolie, get } = useCookie(res, 201)
+        const hashedPassword = await hashPassword(password)
+        const userData = await UserModel.create({ ...data!, password: hashedPassword })
 
-        delCoolie('token_4')
-        res.end('done!')
+        const tokenPayloadData = { _id: userData._id, phone: userData.phone, username: userData.username }
+        const encryptedToken = await encryptToken(tokenPayloadData)
+
+        useCookie(res, 201).set('token', encryptedToken)
+        res.end(JSON.stringify({ message: 'You signedUp successfully btw.' }))
 
     } catch (error) {
 
@@ -67,7 +85,32 @@ const signUp = async (req: IncomingMessage, res: ServerResponse) => {
 
 }
 
+const logOut = async (req: IncomingMessage, res: ServerResponse) => {
+    useCookie(res, 200).remove('token');
+    res.end(JSON.stringify({ message: 'You logOut successfully.' }))
+}
+
+const getMe = async (req: IncomingMessage, res: ServerResponse) => {
+
+    try {
+        const token = req.headers['authorization']?.split(' ')[1]
+        if (!token) return sendResponse(res, 403, { message: "You're not welcomed here, sorry." });
+
+        const decryptedToken = await decryptToken(token)
+        const userData = await UserModel.findOne({ _id: decryptedToken?._id })
+
+        if (!userData) return sendResponse(res, 404, { message: 'No user found with this credentials, sorry.' })
+
+        sendResponse(res, 200, userData!)
+    } catch (error) {
+        sendResponse(res, 404, error!)
+    }
+
+}
+
 module.exports = {
-    login,
+    logIn,
     signUp,
+    logOut,
+    getMe,
 }
