@@ -2,6 +2,45 @@ const { IncomingMessage, ServerResponse } = require("http")
 const { hash, compare } = require('bcrypt')
 const { sign, verify } = require('jsonwebtoken')
 
+type CheckerFunction = (
+    req: typeof IncomingMessage,
+    res: typeof ServerResponse
+) => Promise<boolean>;
+
+type HandlerFunction = (
+    req: typeof IncomingMessage,
+    res: typeof ServerResponse
+) => void;
+
+const middleware = async (
+    req: typeof IncomingMessage,
+    res: typeof ServerResponse,
+    checkerFn: CheckerFunction,
+    next: HandlerFunction
+): Promise<void> => {
+
+    try {
+        const isAllowed = await checkerFn(req, res);
+
+        if (isAllowed) {
+            next(req, res);
+        } else {
+            if (!res.writableEnded) {
+                res.statusCode = 403;
+                res.end(JSON.stringify({ message: 'Access Denied' }));
+            }
+        }
+    } catch (error) {
+        console.error('Middleware Error:', error);
+        // just making sure an error response got sended.
+        if (!res.writableEnded) {
+            res.statusCode = 500;
+            res.end(JSON.stringify({ message: 'Internal Server Error' }));
+        }
+    }
+
+};
+
 const isUrlSegmentEqual = (url: string, str: string, index = 1) => url.split('/')?.[index] === str;
 
 const notFoundRoute = (res: typeof ServerResponse, msg = undefined) => {
@@ -117,7 +156,7 @@ const decryptToken = async (token: string) => {
         const secretKey = process.env?.secretKey
         decryptedToken = await verify(token, secretKey);
     } catch (error) {
-        throw new Error(error as string)
+        throw new Error('Invalid token buddy, try harder.')
     }
 
     return decryptedToken;
@@ -135,5 +174,6 @@ export {
     decryptToken,
     comparePassword,
     hashPassword,
+    middleware,
 
 }

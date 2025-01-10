@@ -17,6 +17,15 @@ const logIn = async (req: IncomingMessage, res: ServerResponse) => {
         const credentials = await getReqBody(req)
         const { phone, username, password } = credentials as any;
 
+        if (
+            (!(Boolean(phone)) && !(Boolean(username)))
+            ||
+            !password.toString().trim().length
+        ) {
+            sendResponse(res, 404, { message: 'No enough credential data you smart ass .' })
+            return
+        }
+
         const userData = await UserModel.findOne({ $or: [{ phone }, { username }] })
         if (!userData) return sendResponse(res, 400, { message: 'No user found with this credentials.' });
 
@@ -54,6 +63,7 @@ const signUp = async (req: IncomingMessage, res: ServerResponse) => {
         }
 
         const { phone, email, username, password } = data as any
+        if (!phone || !email || !username || !password) return sendResponse(res, 404, { message: 'Not all credentials received btw.' })
 
         const isUserExist = await UserModel.findOne({ $or: [{ username }, { phone }] }) // or email
 
@@ -93,13 +103,9 @@ const logOut = async (req: IncomingMessage, res: ServerResponse) => {
 const getMe = async (req: IncomingMessage, res: ServerResponse) => {
 
     try {
-        const token = req.headers['authorization']?.split(' ')[1]
-        if (!token) return sendResponse(res, 403, { message: "You're not welcomed here, sorry." });
 
-        const decryptedToken = await decryptToken(token)
-        const userData = await UserModel.findOne({ _id: decryptedToken?._id })
-
-        if (!userData) return sendResponse(res, 404, { message: 'No user found with this credentials, sorry.' })
+        const userData = (req as any)?.user
+        if (!userData) return sendResponse(res, 404, { message: 'No user found out here haha.' })
 
         sendResponse(res, 200, userData!)
     } catch (error) {
