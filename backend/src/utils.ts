@@ -58,22 +58,26 @@ const getReqBody = async (req: typeof IncomingMessage) => {
                 body += chunk.toString();
             } else if (typeof chunk === 'string') {
                 body += chunk;
+            } else if (chunk instanceof Uint8Array) {
+                body += Buffer.from(chunk).toString();
             } else {
                 reject(new Error(`Unexpected chunk type: ${typeof chunk}`));
             }
         });
 
         req.on('end', () => {
-            try {
-                const parsedBody = JSON.parse(body);
-                resolve(parsedBody);
-            } catch (err: any) {
-                reject(new Error(`Invalid JSON: ${err?.message}`));
-            }
+            if (body) { // Only parse if body is not empty  
+                try {
+                    const parsedBody = JSON.parse(body);
+                    resolve(parsedBody);
+                } catch (err: any) {
+                    reject(new Error(`Invalid JSON: ${err?.message}`));
+                }
+            } else resolve({})
         });
 
         req.on('error', (err: any) => {
-            reject(new Error(`Request error: ${err?.message!}`));
+            reject(new Error(`Request error: ${err?.message}`));
         });
 
     });
@@ -112,9 +116,11 @@ const isAllKeysFilled = (obj: object): boolean => {
 const useCookie = (res: typeof ServerResponse, status = 200) => {
     return {
         set: (tokenName: string, tokenValue: string, httpOnly = true, expiration = Number(process.env.tokenExpirationTime), path = '/') => {
+            const newToken = `${tokenName}=${JSON.stringify(tokenValue)};${httpOnly && 'httpOnly;'}Max-Age=${expiration};Path=${path}`
             res.writeHead(status, {
-                'Set-Cookie': `${tokenName}=${JSON.stringify(tokenValue)};${httpOnly && 'httpOnly;'}Max-Age=${expiration};Path=${path}`
+                'Set-Cookie': newToken,
             })
+            return newToken.split('=')[1]
         },
         get: (cookie: string, cookieName: string) => {
             const cookieTarget = cookie.toString().split(';').find(cc => {

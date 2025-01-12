@@ -1,14 +1,7 @@
 import { IncomingMessage, ServerResponse } from "http";
 
-const connectToDb = require('../configs/db')
 const userModel = require('../models/User')
 const { getReqBody, sendResponse } = require('../utils');
-
-(
-    async () => {
-        await connectToDb()
-    }
-)();
 
 const createUser = async (req: IncomingMessage, res: ServerResponse) => {
 

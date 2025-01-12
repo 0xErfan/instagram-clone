@@ -2,6 +2,7 @@
   "name": "instagram-clone",
   "private": true,
   "version": "0.0.0",
+  "type": "module",
   "scripts": {
     "dev": "concurrently \"vite\" \"npx tailwindcss -i ./src/styles/tailwindCss/input.css -o ./src/styles/tailwindCss/output.css --watch\"",
     "dev:backend": "tsc --watch",

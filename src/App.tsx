@@ -1,6 +1,15 @@
 function App() {
-
-  return <div className='text-center'>hi there</div>
+  const fetchLogin = async () => {
+    const res = await fetch('http://localhost:3001/auth/login', {
+      method: "POST",
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: "reza_2", password: "reza_2" })
+    })
+    const data = await res.json()
+    console.log(data.token)
+    document.cookie = data.token
+  }
+  return <div onClick={fetchLogin} className='text-center'>hi there</div>
 }
 
 export default App
