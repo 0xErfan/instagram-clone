@@ -1,52 +1,26 @@
 import { IncomingMessage, ServerResponse } from "http";
 
-const userModel = require('../models/User')
+const { UserModel } = require('../models/User')
 const { getReqBody, sendResponse } = require('../utils');
 
-const createUser = async (req: IncomingMessage, res: ServerResponse) => {
-
-    if (req.method !== 'POST') return sendResponse(res, 400, 'Method not acceptable buddy.')
-
+const banUser = async (req: IncomingMessage, res: ServerResponse) => {
+    // role check middleware
     try {
-        const userData = await getReqBody(req)
-        await userModel.create(userData)
-        sendResponse(res, 201, { message: 'Work done btw.' })
-    } catch (error) {
-        //@ts-expect-error
-        if (error?.errorResponse && error.errorResponse?.code === 11000) {
-            return sendResponse(res, 400, 'a user exist with this credentials haha.')
+        const userId = await getReqBody(req)
+        const userData = await UserModel.findOne({ _id: userId })
+        if (userData) {
+            userData.isBan = true
+            await userData.save()
+            sendResponse(res, 200, { message: 'User banned successfully.' })
+        } else {
+            sendResponse(res, 404, { message: 'User not found.' })
         }
-        sendResponse(res, 500, error)
-    }
-
-}
-
-const findUser = async (req: IncomingMessage, res: ServerResponse) => {
-
-    try {
-
-        const { _id } = await getReqBody(req)
-
-        if (_id && _id.toString().trim().length !== 24) {
-            sendResponse(res, 400, 'No user found here')
-            return
-        }
-
-        const user = await userModel.findOne({ _id: _id.toString() })
-
-        if (!user) sendResponse(res, 404, 'no user found with this id')
-        sendResponse(res, 200, user)
-
     } catch (error) {
         console.log(error)
         sendResponse(res, 500, error)
     }
 }
 
-const banUser = async (req: IncomingMessage, res: ServerResponse) => {
-    res.end(`user ${2} got banned haha.`)
-}
-
 module.exports = {
-    createUser, findUser, banUser
+    banUser
 }

@@ -1,6 +1,6 @@
 const { IncomingMessage, ServerResponse } = require('http')
 const { decryptToken, sendResponse } = require('../utils')
-const userModel = require('../models/User')
+const { userModel } = require('../models/User')
 
 const authTokenChecker = async (req: typeof IncomingMessage, res: typeof ServerResponse): Promise<boolean> => {
 

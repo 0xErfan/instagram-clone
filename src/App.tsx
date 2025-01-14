@@ -6,7 +6,6 @@ function App() {
       body: JSON.stringify({ username: "reza_2", password: "reza_2" })
     })
     const data = await res.json()
-    console.log(data.token)
     document.cookie = data.token
   }
   return <div onClick={fetchLogin} className='text-center'>hi there</div>

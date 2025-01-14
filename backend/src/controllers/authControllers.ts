@@ -1,7 +1,7 @@
 import { IncomingMessage, ServerResponse } from "http"
 import { getReqBody, sendResponse, isAllKeysFilled, useCookie, hashPassword, encryptToken, comparePassword } from "../utils"
 
-const UserModel = require('../models/User')
+const { UserModel } = require('../models/User')
 
 const logIn = async (req: IncomingMessage, res: ServerResponse) => {
 
@@ -13,19 +13,19 @@ const logIn = async (req: IncomingMessage, res: ServerResponse) => {
         // TODO: login with phone number btw.
 
         const credentials = await getReqBody(req)
-        const { phone, username, password } = credentials as any;
+        const { phone, username, password } = credentials as any || {};
 
         if (
             (!(Boolean(phone)) && !(Boolean(username)))
             ||
-            !password.toString().trim().length
+            !password?.toString().trim().length
         ) {
             sendResponse(res, 404, { message: 'No enough credential data for login.' })
             return
         }
 
         const userData = await UserModel.findOne({ $or: [{ phone }, { username }] })
-        const isPasswordTrue = await comparePassword(password, userData.password)
+        const isPasswordTrue = userData?.password && await comparePassword(password, userData.password)
 
         if (!userData || !isPasswordTrue) return sendResponse(res, 401, { message: 'Invalid credentials provided.' })
 
@@ -36,6 +36,7 @@ const logIn = async (req: IncomingMessage, res: ServerResponse) => {
         res.end(JSON.stringify({ message: 'LoggedIn successfully. (:', token }))
 
     } catch (error) {
+        console.log('the error: ', error)
         res.end({ message: error?.toString()! })
     }
 

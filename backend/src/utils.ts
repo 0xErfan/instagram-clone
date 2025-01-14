@@ -26,16 +26,14 @@ const middleware = async (
             next(req, res);
         } else {
             if (!res.writableEnded) {
-                res.statusCode = 403;
-                res.end(JSON.stringify({ message: 'Access Denied' }));
+                sendResponse(res, 403, { message: 'Access Denied' })
             }
         }
     } catch (error) {
         console.error('Middleware Error:', error);
         // just making sure an error response got sended.
         if (!res.writableEnded) {
-            res.statusCode = 500;
-            res.end(JSON.stringify({ message: 'Internal Server Error' }));
+            sendResponse(res, 500, { message: 'Internal Server Error' })
         }
     }
 
@@ -55,11 +53,11 @@ const getReqBody = async (req: typeof IncomingMessage) => {
 
         req.on('data', (chunk: unknown) => {
             if (Buffer.isBuffer(chunk)) {
-                body += chunk.toString();
+                body += chunk?.toString();
             } else if (typeof chunk === 'string') {
                 body += chunk;
             } else if (chunk instanceof Uint8Array) {
-                body += Buffer.from(chunk).toString();
+                body += Buffer.from(chunk)?.toString();
             } else {
                 reject(new Error(`Unexpected chunk type: ${typeof chunk}`));
             }
@@ -71,7 +69,7 @@ const getReqBody = async (req: typeof IncomingMessage) => {
                     const parsedBody = JSON.parse(body);
                     resolve(parsedBody);
                 } catch (err: any) {
-                    reject(new Error(`Invalid JSON: ${err?.message}`));
+                    reject(`Invalid JSON: ${err?.message}`);
                 }
             } else resolve({})
         });
