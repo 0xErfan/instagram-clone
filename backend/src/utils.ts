@@ -1,6 +1,7 @@
 const { IncomingMessage, ServerResponse } = require("http")
 const { hash, compare } = require('bcrypt')
 const { sign, verify } = require('jsonwebtoken')
+const url = require('url')
 
 type CheckerFunction = (
     req: typeof IncomingMessage,
@@ -41,13 +42,15 @@ const middleware = async (
 
 const isUrlSegmentEqual = (url: string, str: string, index = 1) => url.split('/')?.[index] === str;
 
+const extractValueFromSegment = (url: string, index = 1) => url.split('/')?.[index]
+
 const notFoundRoute = (res: typeof ServerResponse, msg = undefined) => {
     sendResponse(res, 404, msg ?? 'Route not found buddy.')
 };
 
-const getReqBody = async (req: typeof IncomingMessage) => {
+const getReqBody = async (req: typeof IncomingMessage): Promise<unknown> => {
 
-    return new Promise((resolve, reject) => {
+    return new Promise(resolve => {
 
         let body = '';
 
@@ -59,7 +62,8 @@ const getReqBody = async (req: typeof IncomingMessage) => {
             } else if (chunk instanceof Uint8Array) {
                 body += Buffer.from(chunk)?.toString();
             } else {
-                reject(new Error(`Unexpected chunk type: ${typeof chunk}`));
+                console.log(`Unexpected chunk type: ${typeof chunk}`);
+                resolve({})
             }
         });
 
@@ -69,18 +73,24 @@ const getReqBody = async (req: typeof IncomingMessage) => {
                     const parsedBody = JSON.parse(body);
                     resolve(parsedBody);
                 } catch (err: any) {
-                    reject(`Invalid JSON: ${err?.message}`);
+                    resolve({})
                 }
             } else resolve({})
         });
 
         req.on('error', (err: any) => {
-            reject(new Error(`Request error: ${err?.message}`));
+            console.log(`error while getting req body: ${err}`)
+            resolve({})
         });
 
     });
 
 };
+
+const getQueryParams = (req: typeof IncomingMessage) => {
+    const parsedUrl = url.parse(req.url!, true); // true to parse query as an object  
+    return parsedUrl.query;
+}
 
 const sendResponse = (res: typeof ServerResponse, statusCode: number, data: object | string) => {
 
@@ -179,5 +189,7 @@ export {
     comparePassword,
     hashPassword,
     middleware,
+    getQueryParams,
+    extractValueFromSegment,
 
 }

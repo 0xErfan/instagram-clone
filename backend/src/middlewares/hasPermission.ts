@@ -19,7 +19,6 @@ const hasPermission = (roles: string[]) => {
             const decoded = await decryptToken(token);
             const { _id } = decoded || {};
 
-
             if (!_id) {
                 sendResponse(res, 403, { message: 'Access Denied: Invalid Token' });
                 return false;
@@ -32,7 +31,11 @@ const hasPermission = (roles: string[]) => {
                 return false;
             }
 
-            if (Array.isArray(user?.roles) && roles.some(role => user.roles.includes(role))) {
+            if (
+                roles.includes('self') // means the token owner him/her self have the permission.
+                ||
+                Array.isArray(user?.roles) && roles.some(role => user.roles.includes(role))
+            ) {
                 return true;
             } else {
                 sendResponse(res, 403, { message: 'Access Denied' });
