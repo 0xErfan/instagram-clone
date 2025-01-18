@@ -66,9 +66,28 @@ const deleteUser = async (req: IncomingMessage, res: ServerResponse) => {
     }
 }
 
+const updateUser = async (req: IncomingMessage, res: ServerResponse) => {
+
+    if (req.method !== 'PUT') return sendResponse(res, 403, { message: "Method not allowed." })
+
+    try {
+
+        const _id = (req as any).user?._id
+        const userData = await getReqBody(req)
+
+        const updatedUserData = await UserModel.findOneAndUpdate({ _id }, { ...userData })
+        sendResponse(res, 200, { message: 'User data updated successfully.', user: updatedUserData })
+
+    } catch (error) {
+        console.log(`Internal error: ${error}`)
+        sendResponse(res, 500, { message: `Internal Server Error: ${error}` })
+    }
+}
+
 module.exports = {
     banUser,
     deleteUser,
     unBanUser,
+    updateUser,
 
 }

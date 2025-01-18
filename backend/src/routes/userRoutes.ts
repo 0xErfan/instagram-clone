@@ -1,9 +1,10 @@
 import { IncomingMessage, ServerResponse } from "http";
 import { middleware } from "../utils";
-const { hasPermission } = require('../middlewares/hasPermission')
 
+const { hasPermission } = require('../middlewares/hasPermission')
+const authTokenChecker = require('../middlewares/authenticationHeader')
 const { isUrlSegmentEqual, notFoundRoute } = require("../utils")
-const { banUser, createUser, deleteUser, unBanUser } = require('../controllers/userController')
+const { banUser, createUser, deleteUser, unBanUser, updateUser } = require('../controllers/userController')
 
 const userRoute = (req: IncomingMessage, res: ServerResponse) => {
 
@@ -12,6 +13,7 @@ const userRoute = (req: IncomingMessage, res: ServerResponse) => {
     if (isUrlSegmentEqual(url, 'ban', 2)) return middleware(req, res, hasPermission(['admin', 'secretary']), banUser)
     if (isUrlSegmentEqual(url, 'unBan', 2)) return middleware(req, res, hasPermission(['admin', 'secretary']), unBanUser)
     if (isUrlSegmentEqual(url, 'delete', 2)) return middleware(req, res, hasPermission(['user', 'super_admin', 'self']), deleteUser)
+    if (isUrlSegmentEqual(url, 'update', 2)) return middleware(req, res, authTokenChecker, updateUser)
     if (isUrlSegmentEqual(url, 'create', 2)) return createUser(req, res)
 
     notFoundRoute(res)

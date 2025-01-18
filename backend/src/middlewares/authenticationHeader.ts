@@ -1,6 +1,6 @@
 const { IncomingMessage, ServerResponse } = require('http')
 const { decryptToken, sendResponse } = require('../utils')
-const { userModel } = require('../models/User')
+const { UserModel } = require('../models/User')
 
 const authTokenChecker = async (req: typeof IncomingMessage, res: typeof ServerResponse): Promise<boolean> => {
 
@@ -22,7 +22,7 @@ const authTokenChecker = async (req: typeof IncomingMessage, res: typeof ServerR
             return false;
         }
 
-        const user = await userModel.findOne({ _id });
+        const user = await UserModel.findOne({ _id });
 
         if (!user) {
             sendResponse(res, 403, { message: 'Access Denied: User Not Found' });
