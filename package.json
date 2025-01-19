@@ -4,13 +4,15 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "run-p dev-only tailwind",
+    "dev-only": "vite",
     "build": "run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",
     "build-only": "vite build",
     "type-check": "vue-tsc --build",
     "lint": "eslint . --fix",
-    "format": "prettier --write src/"
+    "format": "prettier --write src/",
+    "tailwind": "npx tailwindcss -i ./src/assets/css/tailwind/input.css -o ./src/assets/css/tailwind/output.css --watch"
   },
   "dependencies": {
     "vue": "^3.5.13"
@@ -25,8 +27,10 @@
     "@vue/tsconfig": "^0.7.0",
     "eslint": "^9.14.0",
     "eslint-plugin-vue": "^9.30.0",
+    "npm-run-all": "^4.1.5",
     "npm-run-all2": "^7.0.2",
     "prettier": "^3.3.3",
+    "tailwindcss": "^3.4.17",
     "typescript": "~5.6.3",
     "vite": "^6.0.5",
     "vite-plugin-vue-devtools": "^7.6.8",
