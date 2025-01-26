@@ -14,8 +14,7 @@ const temperature_color = computed(() => {
   <section class="flex items-center justify-center w-full h-[500px] bg-pink-200">
     <div
       class="flex flex-col w-52 h-[300px] p-4 space-y-4 rounded-md bg-blue-950 *:flex *:items-center *:justify-center text-center shadow-black shadow-xl">
-      <div
-        :class='["border border-white duration-200 transition-all w-full h-[176px] rounded-full", temperature_color]'>
+      <div :class='["border border-white duration-200 transition-all w-full h-[176px] rounded-full", temperature_color]'>
         <p class="text-white shadow-xl p-1 bg-inherit text-xl">{{ temperature }} °C</p>
       </div>
       <div class="gap-8 *:flex *:items-center *:justify-center">

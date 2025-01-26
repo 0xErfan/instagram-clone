@@ -14,16 +14,16 @@ import RestaurantMenu from "./components/tepmplates/RestaurantMenu.vue"
 </script>
 
 <template>
-  <main>
-    <Counter />
-    <TemperatureColor />
-    <CountDown />
-    <LoginForm />
-    <QuizApp />
-    <BookApp />
-    <TodoApp />
-    <ECommerce />
-    <QuestionToggles />
-    <RestaurantMenu />
-  </main>
+    <main>
+        <Counter />
+        <TemperatureColor />
+        <CountDown />
+        <LoginForm />
+        <QuizApp />
+        <BookApp />
+        <TodoApp />
+        <ECommerce />
+        <QuestionToggles />
+        <RestaurantMenu />
+    </main>
 </template>
