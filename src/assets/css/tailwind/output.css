@@ -1350,6 +1350,10 @@ video {
   color: rgb(255 255 255 / 0.8);
 }
 
+.underline {
+  text-decoration-line: underline;
+}
+
 .line-through {
   text-decoration-line: line-through;
 }

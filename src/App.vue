@@ -10,20 +10,22 @@ import TodoApp from "./components/tepmplates/TodoApp.vue";
 import ECommerce from "./components/tepmplates/ECommerce.vue"
 import QuestionToggles from "./components/tepmplates/QuestionToggles.vue"
 import RestaurantMenu from "./components/tepmplates/RestaurantMenu.vue"
+import LearnVue_is from "./components/tepmplates/LazyLoading.vue"
 
 </script>
 
 <template>
-    <main>
-        <Counter />
-        <TemperatureColor />
-        <CountDown />
-        <LoginForm />
-        <QuizApp />
-        <BookApp />
-        <TodoApp />
-        <ECommerce />
-        <QuestionToggles />
-        <RestaurantMenu />
-    </main>
+  <main>
+    <Counter />
+    <TemperatureColor />
+    <CountDown />
+    <LoginForm />
+    <QuizApp />
+    <BookApp />
+    <TodoApp />
+    <ECommerce />
+    <QuestionToggles />
+    <RestaurantMenu />
+    <LearnVue_is />
+  </main>
 </template>
