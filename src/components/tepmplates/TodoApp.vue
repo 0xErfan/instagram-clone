@@ -122,7 +122,7 @@ const filteredTodos = computed(() => {
       </div>
       <div class="flex items-center justify-center text-center font-bold text-md mt-5" v-else>No todo
         available in
-        {{ filterType }} filter btw.
+        "{{ filterType }}" filter btw.
       </div>
 
     </div>
