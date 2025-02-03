@@ -1,1 +1,1 @@
-# Just some random projects to start with Vue
+# Instagram clone with vue, ts & mongoose
