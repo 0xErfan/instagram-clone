@@ -5,8 +5,7 @@ module.exports = {
     container: {
       center: true,
       padding: {
-        DEFAULT: "20px",
-        "lg": "10px",
+        DEFAULT: "20px"
       },
     },
 
@@ -14,16 +13,8 @@ module.exports = {
       screens: {
         "xs": "460px",
       },
-      boxShadow: {
-        regular: "0px 10px 30px -17px"
-      }
     }
   },
 
-  plugins: [
-    function ({ addVariant }) {
-      addVariant('ch', '& > *');
-      addVariant('ch-hover', '& > *:hover');
-    }
-  ],
+  plugins: [],
 }
