@@ -17,6 +17,7 @@
     "tailwind": "npx tailwindcss -i ./src/assets/css/tailwind/input.css -o ./src/assets/css/tailwind/output.css --watch"
   },
   "dependencies": {
+    "autoprefixer": "^10.4.20",
     "bcrypt": "^5.1.1",
     "dotenv": "^16.4.7",
     "jsonwebtoken": "^9.0.2",
