@@ -4,15 +4,16 @@ module.exports = {
   theme: {
     container: {
       center: true,
-      padding: {
-        DEFAULT: "20px"
-      },
     },
-
     extend: {
       screens: {
         "xs": "460px",
       },
+      colors: {
+        'btn-primary': "#0095F6",
+        'secondary-bg': '#121212',
+        'secondary-text': "#A8A8A8"
+      }
     }
   },
 

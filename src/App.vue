@@ -4,7 +4,7 @@ import AuthProvider from './Providers/AuthProvider.vue';
 </script>
 
 <template>
-  <main class="text-red-800 bg-blue-400 font-bold">
+  <main class="size-full bg-black">
     <AuthProvider>
       <RouterView />
     </AuthProvider>

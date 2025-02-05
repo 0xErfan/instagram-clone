@@ -10,25 +10,25 @@ const isLoggedIn = ref(false);
 
 onMounted(async () => {
 
-    isLoading.value = true;
+  isLoading.value = true;
 
-    isLogin()
-        .then(({ isLoggedIn: status, data }) => {
-            isLoggedIn.value = status;
-            if (!status) return router.push('auth/login')
-            console.log(data)
-        })
-        .catch(error => {
-            console.log(error)
-            router.push('auth/login')
-        })
-        .finally(() => isLoading.value = false)
+  isLogin()
+    .then(({ isLoggedIn: status, data }) => {
+      isLoggedIn.value = status;
+      if (!status) return router.push('auth/login')
+      console.log(data)
+    })
+    .catch(error => {
+      console.log(error)
+      router.push('auth/login')
+    })
+    .finally(() => isLoading.value = false)
 
 })
 
 </script>
 
 <template>
-    <div v-if="isLoading">Loading...</div>
-    <slot></slot>
+  <div v-if="isLoading">Loading...</div>
+  <slot></slot>
 </template>
