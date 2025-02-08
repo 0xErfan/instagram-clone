@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { computed, onMounted, onUnmounted, ref } from 'vue';
 
 const currentScreenShot = ref(1)
 
@@ -13,18 +13,21 @@ onMounted(() => {
         if (currentScreenShot.value + 1 > screenShotCounts) {
             currentScreenShot.value = 1
         } else currentScreenShot.value++
-    }, 2000);
+    }, 3000);
 })
 
-onBeforeUnmount(() => clearInterval(interval))
+onUnmounted(() => clearInterval(interval))
 
 const currentScreenShotSrc = computed(() => `/images/dynamic-insta-ad-${currentScreenShot.value}.png`);
 
 </script>
 
 <template>
-    <img class="bg-black" src="/images/static-instagram.png" alt="static static-instagram">
-    <div class="flex items-center justify-center absolute w-[54.7%] right-[42.5px] bottom-[45px]">
-        <img :key="currentScreenShot" :src="currentScreenShotSrc" alt="screen shot">
+    <div class="relative">
+        <img class="bg-black" src="/images/static-instagram.png" alt="static instagram">
+        <div class="flex items-center justify-center absolute w-[54.7%] right-[58.5px] top-[26px]">
+            <img data-aos="zoom-in" :key="currentScreenShot" :src="currentScreenShotSrc" alt="screen shot"
+                class="max-w-full h-auto">
+        </div>
     </div>
 </template>

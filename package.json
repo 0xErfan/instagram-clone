@@ -17,6 +17,7 @@
     "tailwind": "npx tailwindcss -i ./src/assets/css/tailwind/input.css -o ./src/assets/css/tailwind/output.css --watch"
   },
   "dependencies": {
+    "aos": "^2.3.4",
     "autoprefixer": "^10.4.20",
     "bcrypt": "^5.1.1",
     "dotenv": "^16.4.7",
@@ -27,6 +28,7 @@
   },
   "devDependencies": {
     "@tsconfig/node22": "^22.0.0",
+    "@types/aos": "^3.0.7",
     "@types/node": "^22.10.2",
     "@vitejs/plugin-vue": "^5.2.1",
     "@vitejs/plugin-vue-jsx": "^4.1.1",
