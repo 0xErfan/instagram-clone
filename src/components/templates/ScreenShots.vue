@@ -23,9 +23,10 @@ const currentScreenShotSrc = computed(() => `/images/dynamic-insta-ad-${currentS
 </script>
 
 <template>
-    <div class="relative">
+    <div class="relative m-auto">
         <img class="bg-black" src="/images/static-instagram.png" alt="static instagram">
-        <div class="flex items-center justify-center absolute w-[54.7%] right-[58.5px] top-[26px]">
+        <div
+            class="flex items-center justify-center absolute w-[54.7%] right-[45.2px] top-[21px] lg:right-[58.5px] lg:top-[26px]">
             <img data-aos="zoom-in" :key="currentScreenShot" :src="currentScreenShotSrc" alt="screen shot"
                 class="max-w-full h-auto">
         </div>

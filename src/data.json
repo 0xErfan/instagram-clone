@@ -1,0 +1,16 @@
+{
+    "footerLinks": [
+        { "key": "About", "link": "https://about.instagram.com/" },
+        { "key": "Blog", "link": "https://about.instagram.com/blog/" },
+        { "key": "Jobs", "link": "https://about.instagram.com/about/jobs/" },
+        { "key": "Help", "link": "https://help.instagram.com/" },
+        { "key": "API", "link": "https://developers.facebook.com/docs/instagram" },
+        { "key": "Privacy", "link": "https://help.instagram.com/519522125107875" },
+        { "key": "Terms", "link": "https://help.instagram.com/581066165581870" },
+        { "key": "Locations", "link": "https://www.instagram.com/explore/locations/" },
+        { "key": "Instagram Lite", "link": "https://lite.instagram.com/" },
+        { "key": "Threads", "link": "https://www.threads.net/" },
+        { "key": "Contact Uploading & Non-Users", "link": "https://help.instagram.com/103817153116368" },
+        { "key": "Meta Verified", "link": "https://www.meta.com/verified/" }
+    ]
+}
