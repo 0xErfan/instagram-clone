@@ -13,10 +13,10 @@ const logIn = async (req: IncomingMessage, res: ServerResponse) => {
         // TODO: login with phone number btw.
 
         const credentials = await getReqBody(req)
-        const { phone, username, password } = credentials as any || {};
+        const { payload, password } = credentials as any || {};
 
         if (
-            (!(Boolean(phone)) && !(Boolean(username)))
+            !(Boolean(payload))
             ||
             !password?.toString().trim().length
         ) {
@@ -24,7 +24,7 @@ const logIn = async (req: IncomingMessage, res: ServerResponse) => {
             return
         }
 
-        const userData = await UserModel.findOne({ $or: [{ phone }, { username }] })
+        const userData = await UserModel.findOne({ $or: [{ phone: payload }, { username: payload }] })
         const isPasswordTrue = userData?.password && await comparePassword(password, userData.password)
 
         if (!userData || !isPasswordTrue) return sendResponse(res, 401, { message: 'Invalid credentials provided.' })
@@ -33,7 +33,7 @@ const logIn = async (req: IncomingMessage, res: ServerResponse) => {
         const encryptedToken = await encryptToken(tokenPayloadData)
 
         const token = useCookie(res, 200).set('token', encryptedToken)
-        res.end(JSON.stringify({ message: 'LoggedIn successfully. (:', token }))
+        res.end(JSON.stringify({ message: 'LoggedIn successfully. (:', data: userData, token }))
 
     } catch (error) {
         console.log('the error: ', error)

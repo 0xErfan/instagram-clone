@@ -1,34 +1,41 @@
 <script setup lang="ts">
+    import Loading from '@/components/templates/Loading.vue';
+    import { isLogin } from '@/utils';
+    import { onMounted, ref } from 'vue';
+    import { useRouter } from 'vue-router';
 
-import { isLogin } from '@/utils';
-import { onMounted, ref } from 'vue';
-import { useRouter } from 'vue-router';
+    const router = useRouter();
+    const isLoading = ref(true);
+    const isLoggedIn = ref(false);
 
-const router = useRouter()
-const isLoading = ref(true);
-const isLoggedIn = ref(false);
+    const MIN_LOADING_TIME = 1000;
 
-onMounted(async () => {
+    onMounted(async () => {
+        isLoading.value = true;
+        const startTime = Date.now();
 
-  isLoading.value = true;
+        await Promise.all([
+            isLogin()
+                .then(({ isLoggedIn: status, data }) => {
+                    isLoggedIn.value = status;
+                    console.log(status, data);
+                    if (!status) return router.replace('/auth/login');
+                })
+                .catch((error) => {
+                    console.log(error);
+                    router.replace('/auth/login');
+                }),
+            new Promise((res) => {
+                const remainingTime = Math.max(0, MIN_LOADING_TIME - (Date.now() - startTime));
+                setTimeout(res, remainingTime);
+            }),
+        ]);
 
-  isLogin()
-    .then(({ isLoggedIn: status, data }) => {
-      isLoggedIn.value = status;
-      if (!status) return router.push('auth/login')
-      console.log(data)
-    })
-    .catch(error => {
-      console.log(error)
-      router.push('auth/login')
-    })
-    .finally(() => isLoading.value = false)
-
-})
-
+        isLoading.value = false;
+    });
 </script>
 
 <template>
-  <div v-if="isLoading">Loading...</div>
-  <slot></slot>
+    <Loading v-if="isLoading" />
+    <slot v-else></slot>
 </template>

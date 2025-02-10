@@ -1,3 +1,3 @@
 <template>
-  sing up here
+    sing up here
 </template>

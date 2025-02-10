@@ -1,3 +1,5 @@
+import axios from "axios";
+
 const isLogin = async (): Promise<{ isLoggedIn: boolean; data?: any }> => {
 
     const token = getCookieValue('token')
@@ -5,17 +7,19 @@ const isLogin = async (): Promise<{ isLoggedIn: boolean; data?: any }> => {
 
     try {
 
-        const response = await fetch('/auth/getMe', {
-            method: 'POST',
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
+        const { data, status } = await axios.post(
+            'http://localhost:3001/auth/getMe',
+            undefined,
+            {
+                headers: { 'Authorization': `Bearer ${token}` }
+            }
+        );
 
-        if (!response.ok) {
+        if (status !== 200) {
             return { isLoggedIn: false, data: undefined };
         }
 
-        const data = await response.json();
-        return { isLoggedIn: data?.status === 200, data };
+        return { isLoggedIn: status === 200, data };
 
     } catch (error) {
         console.error('Fetch error:', error);
@@ -24,20 +28,15 @@ const isLogin = async (): Promise<{ isLoggedIn: boolean; data?: any }> => {
 
 }
 
-const getCookieValue = (cookieName: string) => {
+const getCookieValue = (cookieName: string): string | null => {
 
     const cookies = document.cookie.split('; ');
 
     for (const cookie of cookies) {
-
         const [name, value] = cookie.split('=');
-
-        if (name === cookieName) {
-            return decodeURIComponent(value); // Return the decoded value
-        }
-
+        if (name === cookieName) return decodeURIComponent(value);
     }
-
+    
     return null;
 }
 

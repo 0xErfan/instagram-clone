@@ -19,6 +19,7 @@
   "dependencies": {
     "aos": "^2.3.4",
     "autoprefixer": "^10.4.20",
+    "axios": "^1.7.9",
     "bcrypt": "^5.1.1",
     "dotenv": "^16.4.7",
     "jsonwebtoken": "^9.0.2",

@@ -68,7 +68,7 @@ const getReqBody = async (req: typeof IncomingMessage): Promise<unknown> => {
         });
 
         req.on('end', () => {
-            if (body) { // Only parse if body is not empty  
+            if (body) { // Only parse if body is not empty
                 try {
                     const parsedBody = JSON.parse(body);
                     resolve(parsedBody);
@@ -88,7 +88,7 @@ const getReqBody = async (req: typeof IncomingMessage): Promise<unknown> => {
 };
 
 const getQueryParams = (req: typeof IncomingMessage) => {
-    const parsedUrl = url.parse(req.url!, true); // true to parse query as an object  
+    const parsedUrl = url.parse(req.url!, true); // true to parse query as an object
     return parsedUrl.query;
 }
 
@@ -128,7 +128,7 @@ const useCookie = (res: typeof ServerResponse, status = 200) => {
             res.writeHead(status, {
                 'Set-Cookie': newToken,
             })
-            return newToken.split('=')[1]
+            return newToken.replace('httpOnly;', '')
         },
         get: (cookie: string, cookieName: string) => {
             const cookieTarget = cookie.toString().split(';').find(cc => {
@@ -170,6 +170,7 @@ const decryptToken = async (token: string) => {
         const secretKey = process.env?.secretKey
         decryptedToken = await verify(token, secretKey);
     } catch (error) {
+        console.log(error)
         throw new Error('Invalid token buddy, try harder.')
     }
 
