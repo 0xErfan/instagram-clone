@@ -621,6 +621,10 @@ video {
   right: 0px;
 }
 
+.bottom-12 {
+  bottom: 3rem;
+}
+
 .left-1 {
   left: 0.25rem;
 }
@@ -639,14 +643,6 @@ video {
 
 .top-2 {
   top: 0.5rem;
-}
-
-.top-\[21px\] {
-  top: 21px;
-}
-
-.bottom-12 {
-  bottom: 3rem;
 }
 
 .top-5 {
@@ -703,6 +699,10 @@ video {
   margin-top: auto;
 }
 
+.mb-1 {
+  margin-bottom: 0.25rem;
+}
+
 .flex {
   display: flex;
 }
@@ -711,14 +711,14 @@ video {
   display: none;
 }
 
-.size-full {
-  width: 100%;
-  height: 100%;
-}
-
 .size-20 {
   width: 5rem;
   height: 5rem;
+}
+
+.size-full {
+  width: 100%;
+  height: 100%;
 }
 
 .h-5 {
@@ -737,8 +737,20 @@ video {
   height: 2rem;
 }
 
+.h-9 {
+  height: 2.25rem;
+}
+
+.max-h-8 {
+  max-height: 2rem;
+}
+
 .w-12 {
   width: 3rem;
+}
+
+.w-20 {
+  width: 5rem;
 }
 
 .w-4\/5 {
@@ -760,10 +772,6 @@ video {
 
 .w-full {
   width: 100%;
-}
-
-.w-20 {
-  width: 5rem;
 }
 
 .max-w-full {
@@ -909,25 +917,21 @@ video {
   font-family: Segoe UI Variable, -apple-system, system-ui, BlinkMacSystemFont, Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
-.text-\[10px\] {
-  font-size: 10px;
+.\!text-\[10px\] {
+  font-size: 10px !important;
 }
 
 .text-\[12px\] {
   font-size: 12px;
 }
 
-.text-\[13px\] {
-  font-size: 13px;
+.text-\[14px\] {
+  font-size: 14px;
 }
 
 .text-sm {
   font-size: 0.875rem;
   line-height: 1.25rem;
-}
-
-.text-\[14px\] {
-  font-size: 14px;
 }
 
 .font-bold {
@@ -1006,21 +1010,6 @@ video {
   font-weight: 300;
 }
 
-.\*\:size-12 > * {
-  width: 3rem;
-  height: 3rem;
-}
-
-.\*\:size-14 > * {
-  width: 3.5rem;
-  height: 3.5rem;
-}
-
-.\*\:size-20 > * {
-  width: 5rem;
-  height: 5rem;
-}
-
 .\*\:h-10 > * {
   height: 2.5rem;
 }
@@ -1032,10 +1021,6 @@ video {
 
 .\*\:w-full > * {
   width: 100%;
-}
-
-.\*\:w-20 > * {
-  width: 5rem;
 }
 
 .\*\:cursor-pointer > * {
@@ -1051,20 +1036,20 @@ video {
   color: rgb(168 168 168 / var(--tw-text-opacity, 1));
 }
 
-.hover\:underline:hover {
-  text-decoration-line: underline;
-}
-
-.\*\:hover\:underline:hover > * {
-  text-decoration-line: underline;
-}
-
 .hover\:\*\:underline > *:hover {
   text-decoration-line: underline;
 }
 
+.peer:focus ~ .peer-focus\:\!top-2 {
+  top: 0.5rem !important;
+}
+
 .peer:focus ~ .peer-focus\:top-2 {
   top: 0.5rem;
+}
+
+.peer:focus ~ .peer-focus\:\!text-\[10px\] {
+  font-size: 10px !important;
 }
 
 .peer:focus ~ .peer-focus\:text-\[10px\] {
