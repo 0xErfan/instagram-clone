@@ -1,9 +1,9 @@
 <script setup lang="ts">
     import { RouterLink } from 'vue-router';
     import ScreenShots from '../ScreenShots.vue';
-    import { footerLinks } from '@/data.json';
     import { computed, ref } from 'vue';
     import axios from 'axios';
+    import FooterLinks from '../FooterLinks.vue';
 
     interface LoginForm {
         payload: string;
@@ -45,34 +45,29 @@
             const { data, status } = await axios.post('http://localhost:3001/auth/login', formData.value);
             document.cookie = data?.token;
             console.log(data, status);
+        } catch (error) {
+            console.log(error);
+        } finally {
+            isLoading.value = false;
         }
-        catch (error) { console.log(error) }
-        finally { isLoading.value = false }
-
     };
-
 </script>
 
 <template>
-
     <section class="flex items-center justify-center flex-col size-full container p-4">
-
         <div class="flex justify-center items-center sm:gap-4 size-full text-white m-auto">
-
             <div class="w-auto h-full hidden md:flex">
                 <ScreenShots />
             </div>
 
             <div class="flex flex-col items-center justify-center h-full gap-2 w-full md:w-auto">
-
                 <div class="w-full md:w-[350px] flex items-center flex-col justify-center rounded-[1px] sm:border border-[#333333] sm:px-10 sm:py-6">
-
                     <img class="text-white pt-5 mb-3" width="175" height="51" src="/images/IG logo.svg" alt="ig log" />
 
                     <form @submit.prevent="login" class="mt-6 flex flex-col items-center w-full *:w-full gap-2">
                         <div class="px-2 max-h-8 border border-[#555555] rounded-[2px] bg-secondary-bg relative">
                             <div class="pt-3 flex items-center gap-2">
-                                <input @input="e => updateFormData('payload', (e.target as HTMLInputElement).value)" :value="formData.payload" class="bg-transparent mb-1 w-full text-sm font-normal mt-auto border-none outline-none peer z-10 relative" id="payload" type="text" />
+                                <input @input="(e) => updateFormData('payload', (e.target as HTMLInputElement).value)" :value="formData.payload" class="bg-transparent mb-1 w-full text-sm font-normal mt-auto border-none outline-none peer z-10 relative" id="payload" type="text" />
                                 <div
                                     class="absolute top-1/2 -translate-y-1/2 z-0 left-1 w-full text-[12px] transition-all duration-300 text-secondary-text peer-focus:top-2 peer-focus:text-[10px]"
                                     :class="{
@@ -97,7 +92,7 @@
                                 </div>
                             </div>
                         </div>
-                        <button :disabled="isLoading" type="submit" class="outline-none my-2 rounded-lg text-center p-1 justify-center text-white bg-btn-primary text-sm" :class="{ 'opacity-70': validation.isFormNotValid }">Log in</button>
+                        <button :disabled="isLoading" type="submit" class="outline-none my-2 rounded-lg text-center p-1 justify-center h-8 text-white bg-btn-primary text-sm" :class="{ 'opacity-70': validation.isFormNotValid }">Log in</button>
                         <div class="relative border border-[#262626] my-3">
                             <span class="absolute inset-0 w-12 z-10 px-3 h-5 flex items-center justify-center bg-black text-center m-auto text-secondary-text text-sm">OR</span>
                         </div>
@@ -123,13 +118,6 @@
                 </div>
             </div>
         </div>
-
-        <div class="flex items-center flex-wrap justify-center gap-4 text-secondary-text *:text-nowrap *:w-fit text-[12px] font-normal *:cursor-pointer hover:*:underline">
-            <a v-for="link in footerLinks" :href="link.link">{{ link.key }}</a>
-        </div>
-
-        <h5 class="text-secondary-text m-auto text-center font-normal text-[12px] mt-2">© 2025 Instagram from Meta</h5>
-
+        <FooterLinks />
     </section>
-
 </template>
