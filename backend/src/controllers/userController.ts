@@ -1,7 +1,7 @@
 import { IncomingMessage, ServerResponse } from "http";
 
 const { UserModel } = require('../models/User')
-const { getReqBody, sendResponse, getQueryParams, extractValueFromSegment } = require('../utils');
+const { getReqBody, sendResponse, extractValueFromSegment } = require('../utils');
 
 const banUser = async (req: IncomingMessage, res: ServerResponse) => {
     // role check middleware

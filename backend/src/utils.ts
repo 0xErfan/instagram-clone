@@ -1,6 +1,5 @@
 const { IncomingMessage, ServerResponse } = require("http")
 const { hash, compare } = require('bcrypt')
-const { sign, verify } = require('jsonwebtoken')
 const url = require('url')
 
 type CheckerFunction = (
@@ -154,30 +153,6 @@ const comparePassword = async (password: string | number, hash: string) => {
     return compareResult;
 }
 
-const encryptToken = async (data: unknown, expiresIn = '7h'): Promise<string> => {
-
-    const secretKey = process.env?.secretKey
-    const encryptedToken = await sign(data, secretKey, { expiresIn });
-
-    return encryptedToken;
-}
-
-const decryptToken = async (token: string) => {
-
-    let decryptedToken;
-
-    try {
-        const secretKey = process.env?.secretKey
-        decryptedToken = await verify(token, secretKey);
-    } catch (error) {
-        console.log(error)
-        throw new Error('Invalid token buddy, try harder.')
-    }
-
-    return decryptedToken;
-
-}
-
 export {
     isUrlSegmentEqual,
     notFoundRoute,
@@ -185,12 +160,9 @@ export {
     sendResponse,
     isAllKeysFilled,
     useCookie,
-    encryptToken,
-    decryptToken,
     comparePassword,
     hashPassword,
     middleware,
     getQueryParams,
-    extractValueFromSegment,
-
+    extractValueFromSegment
 }

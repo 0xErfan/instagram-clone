@@ -1,5 +1,8 @@
 import { IncomingMessage, ServerResponse } from "http"
-import { getReqBody, sendResponse, isAllKeysFilled, useCookie, hashPassword, encryptToken, comparePassword } from "../utils"
+import { getReqBody, sendResponse, isAllKeysFilled, useCookie, hashPassword, comparePassword } from "../utils"
+import TokenManager from "../classes/TokenManager"
+
+const { encryptToken } = new TokenManager()
 
 const { UserModel } = require('../models/User')
 
@@ -108,7 +111,7 @@ const logOut = async (req: IncomingMessage, res: ServerResponse) => {
 
 const getMe = async (req: IncomingMessage, res: ServerResponse) => {
 
-    if (req.method !== 'GET') return sendResponse(res, 403, { message: "Method not allowed" })
+    if (req.method !== 'POST') return sendResponse(res, 403, { message: "Method not allowed" })
 
     try {
 

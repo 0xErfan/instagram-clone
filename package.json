@@ -22,7 +22,6 @@
     "axios": "^1.7.9",
     "bcrypt": "^5.1.1",
     "dotenv": "^16.4.7",
-    "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.9.3",
     "vue": "^3.5.13",
     "vue-router": "^4.5.0"

@@ -1,5 +1,6 @@
 const { IncomingMessage, ServerResponse } = require('http')
-const { decryptToken, sendResponse } = require('../utils')
+const { sendResponse } = require('../utils')
+import TokenManager from '../classes/TokenManager';
 import { UserModel } from '../models/User'
 
 const hasPermission = (roles: string[]) => {
@@ -16,7 +17,9 @@ const hasPermission = (roles: string[]) => {
                 return false;
             }
 
-            const decoded = await decryptToken(token);
+            const { decryptToken } = new TokenManager()
+            
+            const decoded = await decryptToken(token) as any;
             const { _id } = decoded || {};
 
             if (!_id) {

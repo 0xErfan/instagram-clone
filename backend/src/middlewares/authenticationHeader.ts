@@ -1,5 +1,7 @@
+import TokenManager from "../classes/TokenManager";
+
 const { IncomingMessage, ServerResponse } = require('http')
-const { decryptToken, sendResponse } = require('../utils')
+const { sendResponse } = require('../utils')
 const { UserModel } = require('../models/User')
 
 const authTokenChecker = async (req: typeof IncomingMessage, res: typeof ServerResponse): Promise<boolean> => {
@@ -25,31 +27,8 @@ const authTokenChecker = async (req: typeof IncomingMessage, res: typeof ServerR
             return false;
         }
 
-        if (!isValidTokenStructure(token)) {
-            sendResponse(res, 400, {
-                message: 'Invalid Token Structure',
-                details: 'Token must contain header, payload, and signature'
-            });
-            return false;
-        }
-
-        const decoded = await decryptToken(token);
-
-        if (!decoded || !decoded._id || !decoded.exp) {
-            sendResponse(res, 403, {
-                message: 'Access Denied: Invalid Token Contents',
-                details: 'Token missing required fields'
-            });
-            return false;
-        }
-
-        if (Date.now() > decoded.exp * 1000) {
-            sendResponse(res, 401, {
-                message: 'Access Denied: Token Expired',
-                details: 'Please obtain a fresh token'
-            });
-            return false;
-        }
+        const { decryptToken } = new TokenManager()
+        const decoded = await decryptToken(token) as any;
 
         const user = await UserModel.findOne({ _id: decoded._id });
 
