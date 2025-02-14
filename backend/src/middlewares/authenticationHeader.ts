@@ -27,7 +27,7 @@ const authTokenChecker = async (req: typeof IncomingMessage, res: typeof ServerR
             return false;
         }
 
-        const { decryptToken } = new TokenManager()
+        const { decryptToken } = TokenManager()
         const decoded = await decryptToken(token) as any;
 
         const user = await UserModel.findOne({ _id: decoded._id });
@@ -64,12 +64,5 @@ const authTokenChecker = async (req: typeof IncomingMessage, res: typeof ServerR
     }
 
 };
-
-
-const isValidTokenStructure = (token: string): boolean => {
-    const parts = token.split('.');
-    return parts.length === 3 &&
-        parts.every(part => part.length > 0);
-}
 
 module.exports = authTokenChecker

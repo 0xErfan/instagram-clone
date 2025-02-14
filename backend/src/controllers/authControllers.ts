@@ -2,7 +2,7 @@ import { IncomingMessage, ServerResponse } from "http"
 import { getReqBody, sendResponse, isAllKeysFilled, useCookie, hashPassword, comparePassword } from "../utils"
 import TokenManager from "../classes/TokenManager"
 
-const { encryptToken } = new TokenManager()
+const { encryptToken } = TokenManager()
 
 const { UserModel } = require('../models/User')
 

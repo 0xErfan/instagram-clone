@@ -17,8 +17,8 @@ const hasPermission = (roles: string[]) => {
                 return false;
             }
 
-            const { decryptToken } = new TokenManager()
-            
+            const { decryptToken } = TokenManager()
+
             const decoded = await decryptToken(token) as any;
             const { _id } = decoded || {};
 

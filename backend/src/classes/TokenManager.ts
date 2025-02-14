@@ -1,57 +1,56 @@
 import { Buffer } from 'buffer';
 import crypto from 'crypto';
 
-class TokenManager {
+const TokenManager = () => {
 
-    private readonly key: Buffer;
-    private readonly algorithm = 'aes-256-gcm';
+    const secretKey = process.env?.secretKey
+    if (!secretKey) throw new Error('Secret key is required')
 
-    constructor() {
+    let algorithm = 'aes-256-gcm'
+    let key = crypto.scryptSync(secretKey, 'salt', 32);
 
-        const secretKey = process.env?.secretKey
-        console.log(secretKey, 'fuck you buddy')
-        if (!secretKey) throw new Error('Secret key is required')
+    return {
 
-        this.key = crypto.scryptSync(secretKey, 'salt', 32);
+        encryptToken: async (data: unknown): Promise<string> => {
 
-    }
+            const iv = crypto.randomBytes(12);
+            const cipher = crypto.createCipheriv(algorithm, key, iv);
 
-    async encryptToken(data: unknown): Promise<string> {
+            const payload = JSON.stringify(data);
 
-        const iv = crypto.randomBytes(12);
-        const cipher = crypto.createCipheriv('aes-256-gcm', 'asljwfealaefl;selfaj', iv);
+            let encrypted = cipher.update(payload, 'utf8', 'hex');
+            encrypted += cipher.final('hex');
+            //@ts-expect-error
+            const tag = cipher.getAuthTag();
 
-        const payload = JSON.stringify(data);
+            return Buffer.concat([iv, tag, Buffer.from(encrypted, 'hex')]).toString('base64url');
 
-        let encrypted = cipher.update(payload, 'utf8', 'hex');
-        encrypted += cipher.final('hex');
+        },
 
-        const tag = cipher.getAuthTag();
+        decryptToken: async (token: string): Promise<unknown> => {
 
-        return Buffer.concat([iv, tag, Buffer.from(encrypted, 'hex')]).toString('base64url');
+            try {
 
-    }
+                const data = Buffer.from(token, 'base64url');
+                const iv = data.subarray(0, 12);
+                const tag = data.subarray(12, 28);
+                const encrypted = data.slice(28);
 
-    async decryptToken(token: string): Promise<unknown> {
+                const decipher = crypto.createDecipheriv(algorithm, key, iv);
+                //@ts-expect-error
+                decipher.setAuthTag(tag);
 
-        try {
+                const decrypted = decipher.update(encrypted.toString('hex'), 'hex', 'utf8') + decipher.final('utf8');
 
-            const data = Buffer.from(token, 'base64url');
-            const iv = data.subarray(0, 12);
-            const tag = data.subarray(12, 28);
-            const encrypted = data.slice(28);
+                return JSON.parse(decrypted);
 
-            const decipher = crypto.createDecipheriv('aes-256-gcm', 'asljwfealaefl;selfaj', iv);
-            decipher.setAuthTag(tag);
-
-            const decrypted = decipher.update(encrypted.toString('hex'), 'hex', 'utf8') + decipher.final('utf8');
-
-            return JSON.parse(decrypted);
-            
-        } catch (error: any) {
-            throw new Error(`Failed to decrypt token: ${error.message}`);
+            } catch (error: any) {
+                throw new Error(`Failed to decrypt token: ${error.message}`);
+            }
         }
+
     }
+
 }
 
 export default TokenManager;
