@@ -40,7 +40,17 @@ const getCookieValue = (cookieName: string): string | null => {
     return null;
 }
 
+const debounceFn = <T extends (...args: any[]) => any>(fn: T, timer: number = 300) => {
+    let timeout: undefined | number;
+    return (...args: Parameters<T>) => {
+        timeout && clearTimeout(timeout)
+        timeout = setTimeout(() => fn(args), timer);
+    }
+}
+
 export {
     isLogin,
     getCookieValue,
+    debounceFn,
+    
 }

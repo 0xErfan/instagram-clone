@@ -4,6 +4,7 @@ import ScreenShots from '../ScreenShots.vue';
 import { computed, ref } from 'vue';
 import axios from 'axios';
 import FooterLinks from '../FooterLinks.vue';
+import AuthInput from '../Ui/AuthInput.vue';
 
 interface LoginForm {
     payload: string;
@@ -27,7 +28,7 @@ const validation = computed(() => {
     return { isFormNotValid, notValidKey };
 });
 
-const updateFormData = <T extends keyof LoginForm>(key: T, value: LoginForm[T]) => {
+const updateFormData = (key: string, value: string) => {
     formData.value = { ...formData.value, [key]: value };
 };
 
@@ -66,7 +67,7 @@ const login = async () => {
                     <img class="text-white pt-5 mb-3" width="175" height="51" src="/images/IG logo.svg" alt="ig log" />
 
                     <form @submit.prevent="login" class="mt-6 flex flex-col items-center w-full *:w-full gap-2">
-                        <div class="px-2 max-h-8 border border-[#555555] rounded-[2px] bg-secondary-bg relative">
+                        <!-- <div class="px-2 max-h-8 border border-[#555555] rounded-[2px] bg-secondary-bg relative">
                             <div class="pt-3 flex items-center gap-2">
                                 <input @input="(e) => updateFormData('payload', (e.target as HTMLInputElement).value)"
                                     :value="formData.payload"
@@ -76,10 +77,11 @@ const login = async () => {
                                     :class="{
                                         '!text-[10px] top-2': formData.payload.trim().length,
                                     }">
-                                    Phone number, username or email.
+                                    
                                 </div>
                             </div>
-                        </div>
+                        </div> -->
+                        <AuthInput :value="formData.payload" :title="'payload'" :onupdate="updateFormData">Phone number, username or email.</AuthInput>
                         <div class="px-2 max-h-8 border border-[#555555] rounded-[2px] bg-secondary-bg relative">
                             <div class="pt-3 flex items-center gap-2">
                                 <input @input="(e) => updateFormData('password', (e.target as HTMLInputElement).value)"
