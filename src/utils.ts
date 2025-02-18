@@ -44,7 +44,7 @@ const debounceFn = <T extends (...args: any[]) => any>(fn: T, timer: number = 30
     let timeout: undefined | number;
     return (...args: Parameters<T>) => {
         timeout && clearTimeout(timeout)
-        timeout = setTimeout(() => fn(args), timer);
+        timeout = setTimeout(() => fn(...args), timer);
     }
 }
 

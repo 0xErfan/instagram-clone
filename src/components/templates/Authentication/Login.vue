@@ -29,6 +29,7 @@ const validation = computed(() => {
 });
 
 const updateFormData = (key: string, value: string) => {
+    console.log(key, value)
     formData.value = { ...formData.value, [key]: value };
 };
 
@@ -37,6 +38,7 @@ const login = async () => {
 
     if (isFormNotValid) {
         (document.querySelector(`#${notValidKey}`) as HTMLInputElement)?.focus();
+        console.log(formData.value)
         return;
     }
 
@@ -81,7 +83,7 @@ const login = async () => {
                                 </div>
                             </div>
                         </div> -->
-                        <AuthInput :value="formData.payload" :title="'payload'" :onupdate="updateFormData">Phone number, username or email.</AuthInput>
+                        <AuthInput v-model="formData.payload" :title="'payload'" :onupdate="updateFormData">Phone number, username or email.</AuthInput>
                         <div class="px-2 max-h-8 border border-[#555555] rounded-[2px] bg-secondary-bg relative">
                             <div class="pt-3 flex items-center gap-2">
                                 <input @input="(e) => updateFormData('password', (e.target as HTMLInputElement).value)"

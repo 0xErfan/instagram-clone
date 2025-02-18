@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
     import { debounceFn } from '@/utils';
-    import { ref, watch } from 'vue';
+    import { ref } from 'vue';
 
     interface AuthInput {
         title: string;
@@ -11,13 +11,6 @@
 
     const { title, onupdate, value } = defineProps<AuthInput>();
     const inputValue = ref(value);
-    
-    watch(
-        () => value,
-        (newVal) => {
-            inputValue.value = newVal;
-        },
-    );
 
     const debounceInputUpdate = debounceFn(onupdate);
 
