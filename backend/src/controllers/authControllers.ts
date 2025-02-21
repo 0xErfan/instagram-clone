@@ -53,33 +53,27 @@ const signUp = async (req: IncomingMessage, res: ServerResponse) => {
 
         const data = await getReqBody(req)
 
-        if (!isAllKeysFilled(data!)) {
-            sendResponse(res, 404, { message: 'Please fill all needed data' })
-            return
-        }
+        if (!isAllKeysFilled(data!)) return sendResponse(res, 404, { message: 'Please fill all needed data' });
 
-        const { phone, email, username, password } = data as any
-        if (!phone || !username || !password) return sendResponse(res, 404, { message: 'Not all credentials received btw.' });
+        const { payload, username, password } = data as any
+        if (!username || !password) return sendResponse(res, 404, { message: 'Not all credentials received btw.' });
 
-        const existingUser = await UserModel.findOne({ $or: [{ phone }, { username }, { email }] })
+        const existingUser = await UserModel.findOne({ $or: [{ phone: payload }, { username: payload }, { email: payload }] })
         const messages: string[] = [];
 
         if (existingUser) {
-            if (existingUser.phone === phone) {
+            if (existingUser.phone === payload) {
                 messages.push('The phone number is already taken.');
             }
             if (existingUser.username === username) {
                 messages.push('The username is already taken.');
             }
-            if (existingUser.email === email) {
+            if (existingUser.email === payload) {
                 messages.push('The email address is already in use.');
             }
         }
 
-        if (existingUser) {
-            sendResponse(res, 404, { message: messages })
-            return
-        }
+        if (existingUser) return sendResponse(res, 404, { message: messages });
 
         const hashedPassword = await hashPassword(password)
         const userData = await UserModel.create({ ...data!, password: hashedPassword })

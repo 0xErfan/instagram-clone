@@ -69,39 +69,10 @@ const login = async () => {
                     <img class="text-white pt-5 mb-3" width="175" height="51" src="/images/IG logo.svg" alt="ig log" />
 
                     <form @submit.prevent="login" class="mt-6 flex flex-col items-center w-full *:w-full gap-2">
-                        <!-- <div class="px-2 max-h-8 border border-[#555555] rounded-[2px] bg-secondary-bg relative">
-                            <div class="pt-3 flex items-center gap-2">
-                                <input @input="(e) => updateFormData('payload', (e.target as HTMLInputElement).value)"
-                                    :value="formData.payload"
-                                    class="bg-transparent mb-1 w-full text-sm font-normal mt-auto border-none outline-none peer z-10 relative"
-                                    id="payload" type="text" />
-                                <div class="absolute top-1/2 -translate-y-1/2 z-0 left-1 w-full text-[12px] transition-all duration-300 text-secondary-text peer-focus:top-2 peer-focus:text-[10px]"
-                                    :class="{
-                                        '!text-[10px] top-2': formData.payload.trim().length,
-                                    }">
-                                    
-                                </div>
-                            </div>
-                        </div> -->
+
                         <AuthInput v-model="formData.payload" :title="'payload'" :onupdate="updateFormData">Phone number, username or email.</AuthInput>
-                        <div class="px-2 max-h-8 border border-[#555555] rounded-[2px] bg-secondary-bg relative">
-                            <div class="pt-3 flex items-center gap-2">
-                                <input @input="(e) => updateFormData('password', (e.target as HTMLInputElement).value)"
-                                    :value="formData.password" id="password"
-                                    class="bg-transparent mb-1 w-4/5 text-sm font-normal mt-auto border-none outline-none peer z-10 relative"
-                                    :type="isPasswordHidden ? 'password' : 'text'" />
-                                <div @click="isPasswordHidden = !isPasswordHidden"
-                                    class="absolute cursor-pointer right-2 text-sm font-normal text-[#fafafa] hover:text-secondary-text transition-all z-20 top-1/2 -translate-y-1/2">
-                                    {{ isPasswordHidden ? 'Show' : 'Hide' }}
-                                </div>
-                                <div class="absolute top-1/2 -translate-y-1/2 z-0 left-1 w-full text-[12px] transition-all duration-300 text-secondary-text peer-focus:!top-2 peer-focus:!text-[10px]"
-                                    :class="{
-                                        '!text-[10px] top-2': formData.password.trim().length,
-                                    }">
-                                    Password
-                                </div>
-                            </div>
-                        </div>
+                        <AuthInput v-model="formData.password" :title="'password'" :onupdate="updateFormData">Password.</AuthInput>
+                        
                         <button :disabled="isLoading" type="submit"
                             class="outline-none my-2 rounded-lg text-center p-1 justify-center h-8 text-white bg-btn-primary text-sm"
                             :class="{ 'opacity-70': validation.isFormNotValid }">Log in</button>
