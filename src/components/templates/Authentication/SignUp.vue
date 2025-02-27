@@ -66,7 +66,7 @@
                     <h3 class="text-center text-[16px] font-bold text-secondary-text">Sign up to see photos and videos from your friends.</h3>
                     <form @submit.prevent="signup" class="mt-6 flex flex-col items-center w-full *:w-full gap-2">
                         <AuthInput v-model="formData.payload" :title="'payload'" :onupdate="updateFormData">Mobile number or email</AuthInput>
-                        <AuthInput v-model="formData.password" :title="'password'" :onupdate="updateFormData">Password</AuthInput>
+                        <AuthInput v-model="formData.password" :isPassword="true" :title="'password'" :onupdate="updateFormData">Password</AuthInput>
                         <AuthInput v-model="formData.fullname" :title="'fullname'" :onupdate="updateFormData">FUll name</AuthInput>
                         <AuthInput v-model="formData.username" :title="'username'" :onupdate="updateFormData">Username</AuthInput>
                         <div class="flex flex-col gap-2 text-secondary-text text-center text-[12px] mt-1">

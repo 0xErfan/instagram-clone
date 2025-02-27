@@ -28,16 +28,15 @@ const validation = computed(() => {
 });
 
 const updateFormData = (key: string, value: string) => {
-    console.log(key, value)
     formData.value = { ...formData.value, [key]: value };
 };
 
 const login = async () => {
+    
     const { isFormNotValid, notValidKey } = validation.value;
 
     if (isFormNotValid) {
         (document.querySelector(`#${notValidKey}`) as HTMLInputElement)?.focus();
-        console.log(formData.value)
         return;
     }
 
@@ -70,7 +69,7 @@ const login = async () => {
                     <form @submit.prevent="login" class="mt-6 flex flex-col items-center w-full *:w-full gap-2">
 
                         <AuthInput v-model="formData.payload" :title="'payload'" :onupdate="updateFormData">Phone number, username or email.</AuthInput>
-                        <AuthInput v-model="formData.password" :title="'password'" :onupdate="updateFormData">Password.</AuthInput>
+                        <AuthInput v-model="formData.password" :isPassword="true" :title="'password'" :onupdate="updateFormData">Password.</AuthInput>
 
                         <button :disabled="isLoading" type="submit"
                             class="outline-none my-2 rounded-lg text-center p-1 justify-center h-8 text-white bg-btn-primary text-sm"
