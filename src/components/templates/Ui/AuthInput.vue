@@ -7,7 +7,10 @@
         title: string;
         onupdate: (title: string, value: string) => void;
         value?: string;
+        isPassword?: boolean
     }
+
+    const isPasswordHidden = ref(true);
 
     const { title, onupdate, value } = defineProps<AuthInput>();
     const inputValue = ref(value);

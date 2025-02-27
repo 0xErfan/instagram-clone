@@ -13,7 +13,6 @@ interface LoginForm {
 
 const formData = ref<LoginForm>({ payload: '', password: '' });
 const isLoading = ref(false);
-const isPasswordHidden = ref(true);
 
 const validation = computed(() => {
     let notValidKey = '';
@@ -72,7 +71,7 @@ const login = async () => {
 
                         <AuthInput v-model="formData.payload" :title="'payload'" :onupdate="updateFormData">Phone number, username or email.</AuthInput>
                         <AuthInput v-model="formData.password" :title="'password'" :onupdate="updateFormData">Password.</AuthInput>
-                        
+
                         <button :disabled="isLoading" type="submit"
                             class="outline-none my-2 rounded-lg text-center p-1 justify-center h-8 text-white bg-btn-primary text-sm"
                             :class="{ 'opacity-70': validation.isFormNotValid }">Log in</button>

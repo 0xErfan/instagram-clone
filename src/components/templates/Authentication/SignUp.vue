@@ -15,7 +15,6 @@
 
     const formData = ref<SignUpForm>({ payload: '', password: '', fullname: '', username: '' });
     const isLoading = ref(false);
-    const isPasswordHidden = ref(true);
 
     const validation = computed(() => {
 
