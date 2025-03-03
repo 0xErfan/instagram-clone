@@ -44,7 +44,7 @@ const isUrlSegmentEqual = (url: string, str: string, index = 1) => url.split('/'
 const extractValueFromSegment = (url: string, index = 1) => url.split('/')?.[index]
 
 const notFoundRoute = (res: typeof ServerResponse, msg = undefined) => {
-    sendResponse(res, 404, msg ?? 'Route not found buddy.')
+    sendResponse(res, 404, { message: msg || 'Route not found buddy.'})
 };
 
 const getReqBody = async (req: typeof IncomingMessage): Promise<unknown> => {
@@ -91,17 +91,16 @@ const getQueryParams = (req: typeof IncomingMessage) => {
     return parsedUrl.query;
 }
 
-const sendResponse = (res: typeof ServerResponse, statusCode: number, data: object | string) => {
+const sendResponse = (
+    res: typeof ServerResponse,
+    statusCode: number,
+    data: object = { message: '', data: null, errors: [], success: true }
+) => {
 
     let responseBody: unknown;
 
-    if (typeof data === 'object') {
-        res.writeHead(statusCode, { 'Content-Type': 'application/json' });
-        responseBody = JSON.stringify(data);
-    } else {
-        res.writeHead(statusCode, { 'Content-Type': 'text/plain' });
-        responseBody = data;
-    }
+    res.writeHead(statusCode, { 'Content-Type': 'application/json' });
+    responseBody = JSON.stringify(data);
 
     res.end(responseBody);
 };
