@@ -13,7 +13,7 @@ const hasPermission = (roles: string[]) => {
             const token = authHeader?.split(' ')[1];
 
             if (!token) {
-                sendResponse(res, 403, { message: 'Access Denied: No Token Provided' });
+                sendResponse(res, 403, { errors: ['Access Denied: No Token Provided'], success: false });
                 return false;
             }
 
@@ -23,14 +23,14 @@ const hasPermission = (roles: string[]) => {
             const { _id } = decoded || {};
 
             if (!_id) {
-                sendResponse(res, 403, { message: 'Access Denied: Invalid Token' });
+                sendResponse(res, 403, { errors: ['Access Denied: Invalid Token'], success: false });
                 return false;
             }
 
             const user = await UserModel.findOne({ _id });
 
             if (!user) {
-                sendResponse(res, 403, { message: 'Access Denied: User Not Found' });
+                sendResponse(res, 403, { errors: ['Access Denied: User Not Found'], success: false });
                 return false;
             }
 
@@ -41,13 +41,13 @@ const hasPermission = (roles: string[]) => {
             ) {
                 return true;
             } else {
-                sendResponse(res, 403, { message: 'Access Denied' });
+                sendResponse(res, 403, { errors: ['Access Denied'], success: false });
                 return false;
             }
 
         } catch (error) {
             console.error('Error in Permission checker:', error);
-            sendResponse(res, 500, { message: error?.toString() });
+            sendResponse(res, 500, { errors: [error?.toString()], success: false });
             return false;
         }
     }

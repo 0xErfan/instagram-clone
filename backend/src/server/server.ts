@@ -14,8 +14,6 @@ const server = createServer(async (req: IncomingMessage, res: ServerResponse) =>
   res.setHeader('Access-Control-Allow-Headers', '*');
   res.setHeader('Access-Control-Allow-Credentials', 'true');
 
-  console.log('hi there that is me here')
-
   if (req.method === 'OPTIONS') {
     res.writeHead(200);
     res.end();

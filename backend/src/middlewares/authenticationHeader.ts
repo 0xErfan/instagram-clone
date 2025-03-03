@@ -10,8 +10,8 @@ const authTokenChecker = async (req: typeof IncomingMessage, res: typeof ServerR
 
         if (!req.headers['authorization']) {
             sendResponse(res, 403, {
-                message: 'Access Denied: No Authorization Header Provided',
-                details: 'Please provide a valid Bearer token'
+                errors: ['Access Denied: No Authorization Header Provided'],
+                success: false
             });
             return false;
         }
@@ -21,8 +21,8 @@ const authTokenChecker = async (req: typeof IncomingMessage, res: typeof ServerR
 
         if (!token || bearer.toLowerCase() !== 'bearer') {
             sendResponse(res, 401, {
-                message: 'Invalid Authorization Header',
-                details: 'Expected format: Bearer <token>'
+                errors: ['Invalid Authorization Header'],
+                success: false
             });
             return false;
         }
@@ -34,8 +34,8 @@ const authTokenChecker = async (req: typeof IncomingMessage, res: typeof ServerR
 
         if (!user) {
             sendResponse(res, 403, {
-                message: 'Access Denied: User Not Found',
-                details: 'User associated with token does not exist'
+                errors: ['Access Denied: User Not Found'],
+                success: false
             });
             return false;
         }
@@ -49,14 +49,14 @@ const authTokenChecker = async (req: typeof IncomingMessage, res: typeof ServerR
 
         if (error.name === 'TokenExpiredError') {
             sendResponse(res, 401, {
-                message: 'Access Denied: Token Expired',
-                details: 'Please obtain a fresh token'
+                errors: ['Access Denied: Token Expired'],
+                success: false
             });
         } else {
             console.log(error)
             sendResponse(res, 500, {
-                message: 'Internal Server Error',
-                details: 'Authentication failed unexpectedly'
+                errors: ['Internal Server Error'],
+                success: false
             });
         }
 
