@@ -26,14 +26,14 @@ const middleware = async (
             next(req, res);
         } else {
             if (!res.writableEnded) {
-                sendResponse(res, 403, { message: 'Access Denied' })
+                sendResponse(res, 403, { errors: ['Access Denied'], success: false })
             }
         }
     } catch (error) {
         console.error('Middleware Error:', error);
         // just making sure an error response got sended.
         if (!res.writableEnded) {
-            sendResponse(res, 500, { message: 'Internal Server Error' })
+            sendResponse(res, 500, { errors: ['Internal Server Error'], success: false })
         }
     }
 
@@ -44,7 +44,7 @@ const isUrlSegmentEqual = (url: string, str: string, index = 1) => url.split('/'
 const extractValueFromSegment = (url: string, index = 1) => url.split('/')?.[index]
 
 const notFoundRoute = (res: typeof ServerResponse, msg = undefined) => {
-    sendResponse(res, 404, { message: msg || 'Route not found buddy.'})
+    sendResponse(res, 404, { errors: [msg || 'Route not found buddy.'], success: false })
 };
 
 const getReqBody = async (req: typeof IncomingMessage): Promise<unknown> => {
@@ -103,6 +103,7 @@ const sendResponse = (
     responseBody = JSON.stringify(data);
 
     res.end(responseBody);
+    
 };
 
 const isAllKeysFilled = (obj: object): boolean => {
