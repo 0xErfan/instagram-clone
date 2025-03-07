@@ -1,6 +1,6 @@
-export type ResponseType = {
+export type Response = {
     success: boolean
-    data: Record<string, any>
+    data: { [key: string]: any }
     status: number
     message: string
     errors: string[]
