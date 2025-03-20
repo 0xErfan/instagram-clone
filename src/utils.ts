@@ -1,4 +1,4 @@
-import axios from "axios";
+import useAxios from './utils/useAxios';
 
 const isLogin = async (): Promise<{ isLoggedIn: boolean; data?: any }> => {
 
@@ -7,13 +7,7 @@ const isLogin = async (): Promise<{ isLoggedIn: boolean; data?: any }> => {
 
     try {
 
-        const { data, status } = await axios.post(
-            'http://localhost:3001/auth/getMe',
-            undefined,
-            {
-                headers: { 'Authorization': `Bearer ${token}` }
-            }
-        );
+        const { data, status } = await useAxios().post('/auth/getMe', undefined, { headers: { 'Authorization': `Bearer ${token}` } });
 
         if (status !== 200) {
             return { isLoggedIn: false, data: undefined };
@@ -36,7 +30,7 @@ const getCookieValue = (cookieName: string): string | null => {
         const [name, value] = cookie.split('=');
         if (name === cookieName) return decodeURIComponent(value);
     }
-    
+
     return null;
 }
 
@@ -52,5 +46,5 @@ export {
     isLogin,
     getCookieValue,
     debounceFn,
-    
+
 }

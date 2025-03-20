@@ -1,10 +1,11 @@
 <script setup lang="ts">
+
 import { RouterLink } from 'vue-router';
 import ScreenShots from '../ScreenShots.vue';
 import { computed, ref } from 'vue';
-import axios from 'axios';
 import FooterLinks from '../FooterLinks.vue';
 import AuthInput from '../Ui/AuthInput.vue';
+import useAxios from '@/utils/useAxios';
 
 interface LoginForm {
     payload: string;
@@ -38,7 +39,7 @@ const login = async () => {
     isLoading.value = true;
 
     try {
-        const { data } = await axios.post('http://localhost:3001/auth/login', formData.value);
+        const { data } = await useAxios().post('/auth/login', formData.value);
         if (data?.token) {
             document.cookie = data.token;
         }
