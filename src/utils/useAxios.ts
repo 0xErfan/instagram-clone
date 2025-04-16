@@ -5,7 +5,7 @@ export type Response = {
     success: boolean
     data?: { [key: string]: any } | null
     status: number
-    message: string
+    message: string | null
     errors: string[]
 }
 
@@ -41,15 +41,13 @@ const useAxios = () => {
 
     const handleError = (error: any): never => {
 
-        const { status, message, errors } = error.response?.data;
-
-        console.log(status)
+        const { errors } = error.response?.data;
 
         const apiError: Response = {
             success: false,
             data: null,
-            message: message || 'An error occurred',
-            status: status || 500,
+            message: null,
+            status: error.response.status || 500,
             errors: errors || [],
         };
 

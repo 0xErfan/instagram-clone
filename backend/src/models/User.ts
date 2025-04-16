@@ -4,7 +4,7 @@ const schema = new Schema({
     fullname: { type: String, required: true, minLength: 3, maxLength: 20 },
     username: { type: String, required: true, minLength: 3, maxLength: 20, unique: true },
     email: { type: String, default: undefined },
-    phone: { type: String, required: true, unique: true },
+    phone: { type: String, unique: true },
     roles: { type: [String], default: ['user'] },
     isBan: { type: Boolean, default: false },
     avatar: { type: String || null, required: false },

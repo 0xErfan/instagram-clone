@@ -105,6 +105,8 @@ const signUp = async (req: IncomingMessage, res: ServerResponse) => {
 
     } catch (error) {
 
+        console.log(error)
+
         //@ts-ignore
         if (error?.errors) {
             //@ts-ignore
@@ -112,7 +114,10 @@ const signUp = async (req: IncomingMessage, res: ServerResponse) => {
             return sendResponse(res, 404, { errors, success: false })
         }
 
-        sendResponse(res, 500, { errors: [error!], success: false })
+        //@ts-ignore
+        const errors = errors?.code = 11000 ? Object.entries(errors?.keyValue).map(([val, key]) => `${key} field value(${val}) is already taken, shall we try something else?`) : error!
+
+        sendResponse(res, 500, { errors, success: false })
 
     }
 

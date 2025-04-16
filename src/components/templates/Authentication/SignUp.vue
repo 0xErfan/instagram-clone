@@ -93,7 +93,7 @@ const signup = async () => {
                 <div
                     class="flex items-center gap-1 justify-center w-full sm:border border-[#333333] px-10 py-4 text-[#e0f1ff] text-sm">
                     Have an account?
-                    <RouterLink to="/?authType=login" class="text-btn-primary font-bold">Log in</RouterLink>
+                    <RouterLink to="/auth/login" class="text-btn-primary font-bold">Log in</RouterLink>
                 </div>
                 <div class="flex flex-col gap-2 items-center justify-center mb-4">
                     <p class="my-2">Get the app.</p>

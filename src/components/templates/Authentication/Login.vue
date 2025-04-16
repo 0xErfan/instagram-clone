@@ -108,7 +108,7 @@ const login = async () => {
                 <div
                     class="flex items-center gap-1 justify-center w-full sm:border border-[#333333] px-10 py-4 text-[#e0f1ff] text-sm">
                     Don't have an account?
-                    <RouterLink to="/?authType=signup" class="text-btn-primary font-bold">
+                    <RouterLink to="/auth/signup" class="text-btn-primary font-bold">
                         Sign up
                     </RouterLink>
                 </div>
