@@ -18,7 +18,7 @@ onMounted(async () => {
     await Promise.all([
         isLogin()
             .then(({ isLoggedIn: status, data }) => {
-                router.push(status ? '/' : '/auth/login')
+                !status && router.push('/auth/login')
                 isLoggedIn.value = status;
             })
             .catch(error => console.log(error)),
@@ -38,7 +38,5 @@ onMounted(async () => {
     <Loading v-if="isLoading" />
     <template v-else>
         <slot></slot>
-        <!-- <MainPage v-if="isLoggedIn" /> -->
-        <!-- <Authentication v-else :auth-type="authType" /> -->
     </template>
 </template>

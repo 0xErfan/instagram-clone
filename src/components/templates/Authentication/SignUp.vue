@@ -1,80 +1,74 @@
 <script setup lang="ts">
+    import { RouterLink } from 'vue-router';
+    import { computed, ref } from 'vue';
+    import FooterLinks from '../FooterLinks.vue';
+    import AuthInput from '../Ui/AuthInput.vue';
+    import useAxios from '@/utils/useAxios';
 
-import { RouterLink } from 'vue-router';
-import { computed, ref } from 'vue';
-import FooterLinks from '../FooterLinks.vue';
-import AuthInput from '../Ui/AuthInput.vue';
-import useAxios from '@/utils/useAxios';
+    interface SignUpForm {
+        payload: string;
+        password: string;
+        fullname: string;
+        username: string;
+    }
 
-interface SignUpForm {
-    payload: string;
-    password: string;
-    fullname: string;
-    username: string;
-}
+    const formData = ref<SignUpForm>({ payload: '', password: '', fullname: '', username: '' });
+    const isLoading = ref(false);
 
-const formData = ref<SignUpForm>({ payload: '', password: '', fullname: '', username: '' });
-const isLoading = ref(false);
+    const validation = computed(() => {
+        let notValidKey = '';
 
-const validation = computed(() => {
+        const isFormNotValid = Object.entries(formData.value).some(([key, value]) => {
+            if (!value.trim().length) {
+                notValidKey = key;
+                return true;
+            }
+        });
 
-    let notValidKey = '';
-
-    const isFormNotValid = Object.entries(formData.value).some(([key, value]) => {
-        if (!value.trim().length) {
-            notValidKey = key;
-            return true;
-        }
+        return { isFormNotValid, notValidKey };
     });
 
-    return { isFormNotValid, notValidKey };
-});
+    const updateFormData = (key: string, value: string) => {
+        formData.value = { ...formData.value, [key]: value };
+    };
 
-const updateFormData = (key: string, value: string) => {
-    formData.value = { ...formData.value, [key]: value };
-};
+    const signup = async () => {
+        const { isFormNotValid, notValidKey } = validation.value;
 
-const signup = async () => {
+        if (isFormNotValid) {
+            (document.querySelector(`#${notValidKey}`) as HTMLInputElement)?.focus();
+            return;
+        }
 
-    const { isFormNotValid, notValidKey } = validation.value;
+        isLoading.value = true;
 
-    if (isFormNotValid) {
-        (document.querySelector(`#${notValidKey}`) as HTMLInputElement)?.focus();
-        return;
-    }
-
-    isLoading.value = true;
-
-    try {
-        const { data, status } = await useAxios().post('/auth/signup', formData.value);
-        document.cookie = data?.token;
-        console.log(data, status);
-    } catch (error) {
-        console.log(error);
-    } finally {
-        isLoading.value = false;
-    }
-};
+        try {
+            const { data, status } = await useAxios().post('/auth/signup', formData.value);
+            document.cookie = data?.token;
+            // TODO: successful signup alert.
+            // TODO: check for fallback routes
+            router.replace('/');
+            console.log(data, status);
+        } catch (error) {
+            console.log(error);
+        } finally {
+            isLoading.value = false;
+        }
+    };
 </script>
 
 <template>
     <section class="flex items-center justify-center flex-col size-full container p-4 mt-12">
         <div class="flex justify-center items-center sm:gap-4 size-full text-white m-auto">
             <div class="flex flex-col items-center justify-center h-full gap-2 w-full md:w-auto">
-                <div
-                    class="w-full md:w-[350px] flex items-center flex-col justify-center rounded-[1px] sm:border border-[#333333] sm:px-10 sm:py-6">
+                <div class="w-full md:w-[350px] flex items-center flex-col justify-center rounded-[1px] sm:border border-[#333333] sm:px-10 sm:py-6">
                     <img class="text-white pt-5 mb-3" width="175" height="51" src="/images/IG logo.svg" alt="ig log" />
-                    <h3 class="text-center text-[16px] font-bold text-secondary-text">Sign up to see photos and videos from
-                        your friends.</h3>
+                    <h3 class="text-center text-[16px] font-bold text-secondary-text">Sign up to see photos and videos from your friends.</h3>
                     <form @submit.prevent="signup" class="mt-6 flex flex-col items-center w-full *:w-full gap-2">
-                        <AuthInput v-model="formData.payload" :title="'payload'" :onupdate="updateFormData">Mobile number or
-                            email</AuthInput>
-                        <AuthInput v-model="formData.password" :isPassword="true" :title="'password'"
-                            :onupdate="updateFormData">Password</AuthInput>
-                        <AuthInput v-model="formData.fullname" :title="'fullname'" :onupdate="updateFormData">FUll name
-                        </AuthInput>
-                        <AuthInput v-model="formData.username" :title="'username'" :onupdate="updateFormData">Username
-                        </AuthInput>
+                        <AuthInput v-model="formData.payload" :title="'payload'" :onupdate="updateFormData">Mobile number or email</AuthInput>
+                        <AuthInput v-model="formData.password" :isPassword="true" :title="'password'" :onupdate="updateFormData">Password</AuthInput>
+                        <AuthInput v-model="formData.fullname" :title="'fullname'" :onupdate="updateFormData">FUll name</AuthInput>
+                        <AuthInput v-model="formData.username" :title="'username'" :onupdate="updateFormData">Username</AuthInput>
                         <div class="flex flex-col gap-2 text-secondary-text text-center text-[12px] mt-1">
                             <h5>
                                 People who use our service may have uploaded your contact information to Instagram.
@@ -85,13 +79,10 @@ const signup = async () => {
                                 <a href="https://www.facebook.com/help/instagram" class="text-[#e0f1ff]">Terms & Policy</a>
                             </p>
                         </div>
-                        <button :disabled="isLoading" type="submit"
-                            class="outline-none my-2 rounded-lg text-center p-1 justify-center text-white h-8 bg-btn-primary text-sm"
-                            :class="{ 'opacity-70': validation.isFormNotValid }">Sign up</button>
+                        <button :disabled="isLoading" type="submit" class="outline-none my-2 rounded-lg text-center p-1 justify-center text-white h-8 bg-btn-primary text-sm" :class="{ 'opacity-70': validation.isFormNotValid }">Sign up</button>
                     </form>
                 </div>
-                <div
-                    class="flex items-center gap-1 justify-center w-full sm:border border-[#333333] px-10 py-4 text-[#e0f1ff] text-sm">
+                <div class="flex items-center gap-1 justify-center w-full sm:border border-[#333333] px-10 py-4 text-[#e0f1ff] text-sm">
                     Have an account?
                     <RouterLink to="/auth/login" class="text-btn-primary font-bold">Log in</RouterLink>
                 </div>

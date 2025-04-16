@@ -6,6 +6,7 @@ import { computed, ref } from 'vue';
 import FooterLinks from '../FooterLinks.vue';
 import AuthInput from '../Ui/AuthInput.vue';
 import useAxios from '@/utils/useAxios';
+import router from '@/router'
 
 interface LoginForm {
     payload: string;
@@ -42,6 +43,9 @@ const login = async () => {
         const { data } = await useAxios().post('/auth/login', formData.value);
         if (data?.token) {
             document.cookie = data.token;
+            // TODO: successful login alert.
+            // TODO: check for fallback routes
+            router.replace('/')
         }
     } catch (error) {
         console.error('Login failed:', error);
