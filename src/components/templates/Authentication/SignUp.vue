@@ -2,8 +2,9 @@
     import { RouterLink } from 'vue-router';
     import { computed, ref } from 'vue';
     import FooterLinks from '../FooterLinks.vue';
-    import AuthInput from '../Ui/AuthInput.vue';
     import useAxios from '@/utils/useAxios';
+    import router from '@/router';
+    import AuthInput from '@/components/modules/Ui/AuthInput.vue';
 
     interface SignUpForm {
         payload: string;

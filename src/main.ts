@@ -5,9 +5,7 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
 
-//@ts-ignore
 import Aos from 'aos'
-
 Aos.init()
 
 createApp(App).use(router).mount('#app')
