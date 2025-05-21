@@ -1,13 +1,9 @@
 import { inject, provide } from "vue"
-import { userUserStore } from "./userStore"
+import { useUserStore } from "./userStore"
 
 export const provideState = () => {
 
-    const userState = userUserStore()
-
-    provide('userState', userState)
-
-    return { userState }
+    provide('userState', useUserStore())
 
 }
 
