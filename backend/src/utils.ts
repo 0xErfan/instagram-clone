@@ -94,17 +94,25 @@ const getQueryParams = (req: typeof IncomingMessage) => {
 const sendResponse = (
     res: typeof ServerResponse,
     statusCode: number,
-    data: object = { message: '', data: null, errors: [], success: true }
+    data: object = { message: '', data: null, errors: [], success: true },
+    cookieHeader?: string
 ) => {
 
-    let responseBody: unknown;
+    const headers: any = {
+        'Content-Type': 'application/json'
+    };
 
-    res.writeHead(statusCode, { 'Content-Type': 'application/json' });
-    responseBody = JSON.stringify(data);
+    if (cookieHeader) {
+        headers['Set-Cookie'] = cookieHeader.concat('; SameSite=Lax');
+    }
 
-    res.end(responseBody);
-    
+    console.log(headers)
+
+    res.writeHead(statusCode, headers);
+    res.end(JSON.stringify(data));
+
 };
+
 
 const isAllKeysFilled = (obj: object): boolean => {
 
@@ -120,28 +128,56 @@ const isAllKeysFilled = (obj: object): boolean => {
 
 };
 
-const useCookie = (res: typeof ServerResponse, status = 200) => {
+// const useCookie = (res: typeof ServerResponse, status = 200) => {
+//     return {
+//         set: (tokenName: string, tokenValue: string, httpOnly = true, expiration = Number(process.env.tokenExpirationTime), path = '/') => {
+//             const newToken = `${tokenName}=${JSON.stringify(tokenValue)};${httpOnly && 'httpOnly;'}Max-Age=${expiration};Path=${path}`
+//             res.writeHead(status, {
+//                 'Set-Cookie': newToken,
+//             })
+//             return newToken.replace('httpOnly;', '')
+//         },
+//         get: (cookie: string, cookieName: string) => {
+//             const cookieTarget = cookie.toString().split(';').find(cc => {
+//                 return cc.split('=')[0] == cookieName
+//             })
+//             return cookieTarget?.split('=')[1];
+//         },
+//         remove: (name: string) => {
+//             res.writeHead(200, {
+//                 'Set-Cookie': `${name}=; HttpOnly; Max-Age=0; Path=/`
+//             });
+//         }
+//     }
+// }
+
+const useCookie = () => {
     return {
-        set: (tokenName: string, tokenValue: string, httpOnly = true, expiration = Number(process.env.tokenExpirationTime), path = '/') => {
-            const newToken = `${tokenName}=${JSON.stringify(tokenValue)};${httpOnly && 'httpOnly;'}Max-Age=${expiration};Path=${path}`
-            res.writeHead(status, {
-                'Set-Cookie': newToken,
-            })
-            return newToken.replace('httpOnly;', '')
+        set: (
+            tokenName: string,
+            tokenValue: string,
+            httpOnly = true,
+            expiration = Number(process.env.tokenExpirationTime),
+            path = '/'
+        ) => {
+            const cookieParts = [
+                `${tokenName}=${JSON.stringify(tokenValue)}`,
+                `Max-Age=${expiration}`,
+                `Path=${path}`
+            ];
+            if (httpOnly) cookieParts.push('HttpOnly');
+            return cookieParts.join('; ');
         },
         get: (cookie: string, cookieName: string) => {
-            const cookieTarget = cookie.toString().split(';').find(cc => {
-                return cc.split('=')[0] == cookieName
-            })
+            const cookieTarget = cookie.toString().split(';').find(cc => cc.split('=')[0] == cookieName);
             return cookieTarget?.split('=')[1];
         },
         remove: (name: string) => {
-            res.writeHead(200, {
-                'Set-Cookie': `${name}=; HttpOnly; Max-Age=0; Path=/`
-            });
+            return `${name}=; HttpOnly; Max-Age=0; Path=/`;
         }
-    }
-}
+    };
+};
+
 
 const hashPassword = async (pass: string | number) => {
     let hashedPass = await hash(pass, 12)

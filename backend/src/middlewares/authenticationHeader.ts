@@ -8,51 +8,43 @@ const authTokenChecker = async (req: typeof IncomingMessage, res: typeof ServerR
 
     try {
 
-        if (!req.headers['authorization']) {
+        const cookieHeader = req.headers.cookie;
+
+        if (!cookieHeader) {
             sendResponse(res, 403, {
-                errors: ['Access Denied: No Authorization Header Provided'],
+                errors: ['Access Denied: No Cookie Provided'],
                 success: false
             });
             return false;
         }
 
-        const authHeader = req.headers['authorization'];
-        const [bearer, token] = authHeader.split(' ');
+        const tokenMatch = cookieHeader.match(/token=([^;]+)/);
+        const token = tokenMatch?.[1]?.replace(/^"|"$/g, ''); // remove quotes if any
 
-        if (!token || bearer.toLowerCase() !== 'bearer') {
+        if (!token) {
             sendResponse(res, 401, {
-                errors: ['Invalid Authorization Header'],
+                errors: ['Access Denied: Token Missing in Cookie'],
                 success: false
             });
             return false;
         }
 
-        const { decryptToken } = TokenManager()
+        const { decryptToken } = TokenManager();
 
-        try {
+        const decoded = await decryptToken(token) as any;
 
-            const decoded = await decryptToken(token) as any;
+        const user = await UserModel.findById(decoded._id);
 
-            const user = await UserModel.findOne({ _id: decoded._id });
-
-            if (!user) {
-                sendResponse(res, 403, {
-                    errors: ['Access Denied: User Not Found'],
-                    success: false
-                });
-                return false;
-            }
-
-            (req as any).user = user;
-            return true;
-
-        } catch (error) {
-            sendResponse(res, 401, {
-                errors: ['Invalid Authorization Header'],
+        if (!user) {
+            sendResponse(res, 403, {
+                errors: ['Access Denied: User Not Found'],
                 success: false
             });
             return false;
         }
+
+        (req as any).user = user;
+        return true;
 
     } catch (error: any) {
 
@@ -64,7 +56,6 @@ const authTokenChecker = async (req: typeof IncomingMessage, res: typeof ServerR
                 success: false
             });
         } else {
-            console.log(error)
             sendResponse(res, 500, {
                 errors: ['Internal Server Error'],
                 success: false
@@ -72,8 +63,8 @@ const authTokenChecker = async (req: typeof IncomingMessage, res: typeof ServerR
         }
 
         return false;
-    }
 
+    }
 };
 
 module.exports = authTokenChecker

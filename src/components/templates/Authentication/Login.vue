@@ -6,6 +6,7 @@
     import useAxios from '@/utils/useAxios';
     import router from '@/router';
     import AuthInput from '@/components/modules/Ui/AuthInput.vue';
+    import { useUserStore } from '@/composables/userStore';
 
     interface LoginForm {
         payload: string;
@@ -39,12 +40,8 @@
 
         try {
             const { data } = await useAxios().post('/auth/login', formData.value);
-            if (data?.token) {
-                document.cookie = data.token;
-                // TODO: successful login alert.
-                // TODO: check for fallback routes
-                router.replace('/');
-            }
+            useUserStore().setter(data);
+            router.replace('/');
         } catch (error) {
             console.error('Login failed:', error);
         } finally {

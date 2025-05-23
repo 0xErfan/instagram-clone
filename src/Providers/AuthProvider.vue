@@ -14,12 +14,13 @@
     onMounted(async () => {
         isLoading.value = true;
         const startTime = Date.now();
-        alert('duplicate redirectTo queries on every reload(fuck this job)');
+
         await Promise.all([
-            isLogin().then(({ isLoggedIn: status, data }) => {
+            isLogin().then(({ isLoggedIn: loginStatus, data }) => {
                 const redirectUrl = route.query?.redirectTo as string;
-                if (status) {
-                    redirectUrl && (window.location.href = redirectUrl);
+                if (loginStatus) {
+                    router.replace('/');
+                    // redirectUrl && (window.location.href = redirectUrl);
                 } else {
                     // how to remove the redirectTo parameter from the route
                     router.replace({

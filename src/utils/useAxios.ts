@@ -12,6 +12,7 @@ export type Response = {
 const useAxios = () => {
 
     const axiosInstance = axios.create({
+        withCredentials: true,
         baseURL: server.url,
         timeout: 8000,
         headers: { 'Content-Type': 'application/json' },

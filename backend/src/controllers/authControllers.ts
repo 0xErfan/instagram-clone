@@ -16,9 +16,11 @@ const logIn = async (req: IncomingMessage, res: ServerResponse) => {
     try {
 
         // TODO: add type safety.
-        // TODO: login with phone number btw.
+        // TODO: login with phone number or email btw.
 
         const credentials = await getReqBody(req)
+
+        // payload: phone | email | username
         const { payload, password } = credentials as any || {};
 
         if (
@@ -26,11 +28,21 @@ const logIn = async (req: IncomingMessage, res: ServerResponse) => {
             ||
             !password?.toString().trim().length
         ) {
-            sendResponse(res, 404, { errors: ['No enough credential data for login.'], success: false })
+            sendResponse(res, 404, { errors: ['Please fill all form fields.'], success: false })
             return
         }
 
-        const userData = await UserModel.findOne({ $or: [{ phone: payload }, { username: payload }] })
+        // Determine whether payload is phone, email, or username
+        let query: any = {};
+        if (/^\d{10,15}$/.test(payload)) {
+            query.phone = payload;
+        } else if (/^[\w.-]+@[\w.-]+\.[a-zA-Z]{2,}$/.test(payload)) {
+            query.email = payload.toLowerCase();
+        } else {
+            query.username = payload.toLowerCase();
+        }
+
+        const userData = await UserModel.findOne(query)
         const isPasswordTrue = userData?.password && await comparePassword(password, userData.password)
 
         if (!userData || !isPasswordTrue) return sendResponse(res, 401, { errors: ['Invalid credentials provided.'], success: false })
@@ -38,16 +50,14 @@ const logIn = async (req: IncomingMessage, res: ServerResponse) => {
         const tokenPayloadData = { _id: userData._id, phone: userData.phone, username: userData.username }
         const encryptedToken = await encryptToken(tokenPayloadData)
 
-        const token = useCookie(res, 200).set('token', encryptedToken)
+        const token = useCookie().set('token', encryptedToken)
 
-        res.end(JSON.stringify({
-            message: 'You LoggedIn successfully. (:',
-            success: true,
-            data: {
-                userData,
-                token
-            }
-        }))
+        sendResponse(
+            res,
+            200,
+            { message: 'You LoggedIn successfully', success: true, data: { userData } },
+            token
+        )
 
     } catch (error) {
         console.log('the error: ', error)
@@ -58,74 +68,93 @@ const logIn = async (req: IncomingMessage, res: ServerResponse) => {
 
 const signUp = async (req: IncomingMessage, res: ServerResponse) => {
 
-    if (req.method !== 'POST') return sendResponse(res, 404, { errors: ['Method not supported'], success: false })
+    if (req.method !== 'POST') {
+        return sendResponse(res, 404, { errors: ['Method not supported'], success: false });
+    }
 
     try {
 
-        const data = await getReqBody(req)
+        const data = await getReqBody(req);
 
         if (!isAllKeysFilled(data!)) {
-            sendResponse(res, 404, { errors: ['Please fill all needed data'], success: false });
+            sendResponse(res, 404, { errors: ['Please fill all the form fields.'], success: false });
             return;
         }
 
-        const { payload, username, password } = data as any
-        if (!username || !password) return sendResponse(res, 404, { errors: ['Not all credentials received btw.'], success: false });
-
-        const existingUser = await UserModel.findOne({ $or: [{ phone: payload }, { username: payload }, { email: payload }] })
+        const { payload, username, password, fullname } = data as any;
+        const normalizedUsername = username.toLowerCase();
         const messages: string[] = [];
 
-        if (existingUser) {
-            if (existingUser.phone === payload) {
-                messages.push('The phone number is already taken.');
-            }
-            if (existingUser.username === username) {
-                messages.push('The username is already taken.');
-            }
-            if (existingUser.email === payload) {
-                messages.push('The email address is already in use.');
-            }
+        let payloadField: 'email' | 'phone' | null = null;
+        let normalizedPayload: string | null = null;
+
+        if (/^\d{10,15}$/.test(payload)) {
+            payloadField = 'phone';
+            normalizedPayload = payload;
+        } else if (/^[\w.-]+@[\w.-]+\.[a-zA-Z]{2,}$/.test(payload)) {
+            payloadField = 'email';
+            normalizedPayload = payload.toLowerCase();
+        } else {
+            return sendResponse(res, 404, { errors: ['Invalid email or phone number format.'], success: false });
         }
 
-        if (existingUser) return sendResponse(res, 404, { errors: messages, success: false });
+        const existingUser = await UserModel.findOne({
+            $or: [
+                { username: normalizedUsername },
+                { email: payloadField === 'email' ? normalizedPayload : undefined },
+                { phone: payloadField === 'phone' ? normalizedPayload : undefined },
+            ].filter(Boolean)
+        });
 
-        const hashedPassword = await hashPassword(password)
-        const userData = await UserModel.create({ ...data!, password: hashedPassword })
+        if (existingUser) {
+            if (existingUser.username === normalizedUsername) messages.push('The username is already taken.');
+            if (existingUser.email === normalizedPayload && payloadField === 'email') messages.push('The email address is already in use.');
+            if (existingUser.phone === normalizedPayload && payloadField === 'phone') messages.push('The phone number is already taken.');
+            console.log(existingUser)
+            console.log(normalizedPayload)
+            return sendResponse(res, 404, { errors: messages, success: false });
+        }
 
-        const tokenPayloadData = { _id: userData._id, phone: userData.phone, username: userData.username }
-        const encryptedToken = await encryptToken(tokenPayloadData)
+        const userPayload: any = {
+            fullname,
+            username: normalizedUsername,
+            password: await hashPassword(password),
+        };
 
-        const newToken = useCookie(res, 201).set('token', encryptedToken)
+        userPayload[payloadField] = normalizedPayload;
+
+        const userData = await UserModel.create(userPayload);
+
+        const tokenPayloadData = { _id: userData._id, phone: userData.phone, username: userData.username };
+        const encryptedToken = await encryptToken(tokenPayloadData);
+
+        const newToken = useCookie().set('token', encryptedToken);
 
         sendResponse(res, 201, {
             message: 'You signed up successfully btw.',
-            data: { token: newToken, userData },
+            data: { userData },
             success: true
-        })
+        }, newToken);
 
     } catch (error) {
-
-        console.log(error)
 
         //@ts-ignore
         if (error?.errors) {
             //@ts-ignore
-            const errors = Object.values(error.errors).map(err => err?.message)
-            return sendResponse(res, 404, { errors, success: false })
+            const errors = Object.values(error.errors).map(err => err?.message);
+            return sendResponse(res, 404, { errors, success: false });
         }
 
         //@ts-ignore
-        const errors = errors?.code = 11000 ? Object.entries(errors?.keyValue).map(([val, key]) => `${key} field value(${val}) is already taken, shall we try something else?`) : error!
-
-        sendResponse(res, 500, { errors, success: false })
+        const errors = error?.code === 11000 ? Object.entries(error?.keyValue).map(([key, val]) => `${key} field value (${val}) is already taken, shall we try something else?`) : [error?.toString];
+        sendResponse(res, 500, { errors, success: false });
 
     }
-
-}
+};
 
 const logOut = async (req: IncomingMessage, res: ServerResponse) => {
-    useCookie(res, 200).remove('token');
-    sendResponse(res, 200, { message: 'You logged out successfully.', success: true })
+    const removedTokenHeader = useCookie().remove('token');
+    sendResponse(res, 200, { message: 'You logged out successfully.', success: true }, removedTokenHeader)
 }
 
 const getMe = async (req: IncomingMessage, res: ServerResponse) => {

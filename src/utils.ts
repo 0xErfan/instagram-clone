@@ -2,12 +2,12 @@ import useAxios from './utils/useAxios';
 
 const isLogin = async (): Promise<{ isLoggedIn: boolean; data?: any }> => {
 
-    const token = getCookieValue('token')
-    if (!token) return { isLoggedIn: false, data: undefined };
+    // const token = getCookieValue('token')
+    // if (!token) return { isLoggedIn: false, data: undefined };
 
     try {
 
-        const { data, status } = await useAxios().post('/auth/getMe', undefined, { headers: { 'Authorization': `Bearer ${token}` } });
+        const { data, status } = await useAxios().post('/auth/getMe');
 
         if (status !== 200) {
             return { isLoggedIn: false, data: undefined };
@@ -25,6 +25,8 @@ const isLogin = async (): Promise<{ isLoggedIn: boolean; data?: any }> => {
 const getCookieValue = (cookieName: string): string | null => {
 
     const cookies = document.cookie.split('; ');
+
+    console.log(cookies)
 
     for (const cookie of cookies) {
         const [name, value] = cookie.split('=');
