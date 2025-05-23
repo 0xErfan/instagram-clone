@@ -55,6 +55,29 @@ const userSchema = new Schema({
 
 }, { timestamps: true });
 
+async function fixUserIndexes() {
+    try {
+        //@ts-expect-error
+        await UserModel.collection.dropIndex('phone_1').catch(err => {
+            if (err.codeName !== 'IndexNotFound') console.error(err);
+        });
+
+        //@ts-expect-error
+        await UserModel.collection.dropIndex('email_1').catch(err => {
+            if (err.codeName !== 'IndexNotFound') console.error(err);
+        });
+
+        // Recreate indexes with sparse:true
+        await UserModel.collection.createIndex({ phone: 1 }, { unique: true, sparse: true });
+        await UserModel.collection.createIndex({ email: 1 }, { unique: true, sparse: true });
+
+        console.log('Indexes fixed successfully ✅');
+    } catch (error) {
+        console.error('Failed to fix indexes ❌:', error);
+    }
+}
+
 const UserModel = models.User || model('User', userSchema);
+
 module.exports = { UserModel };
-export { UserModel };
+export { UserModel, fixUserIndexes };

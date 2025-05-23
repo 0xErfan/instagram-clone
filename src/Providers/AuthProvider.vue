@@ -22,11 +22,9 @@
                 if (loginStatus) return setter(data);
 
                 const fullRoute = route.fullPath;
-
-                if (fullRoute.includes('/auth/login') || fullRoute.includes('/auth/signup')) {
+                if (fullRoute.startsWith('/auth/login') || fullRoute.startsWith('/auth/signup')) {
                     return;
                 }
-
                 router.replace({
                     path: '/auth/login',
                     query: { redirectUrl: route.fullPath },
