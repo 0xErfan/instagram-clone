@@ -98,20 +98,18 @@ const signUp = async (req: IncomingMessage, res: ServerResponse) => {
             return sendResponse(res, 404, { errors: ['Invalid email or phone number format.'], success: false });
         }
 
-        const existingUser = await UserModel.findOne({
-            $or: [
-                { username: normalizedUsername },
-                { email: payloadField === 'email' ? normalizedPayload : undefined },
-                { phone: payloadField === 'phone' ? normalizedPayload : undefined },
-            ].filter(Boolean)
-        });
+        const orConditions: Record<string, string>[] = [
+            { username: normalizedUsername },
+        ];
+
+        payloadField && orConditions.push({ [payloadField]: normalizedPayload! });
+
+        const existingUser = await UserModel.findOne({ $or: orConditions });
 
         if (existingUser) {
             if (existingUser.username === normalizedUsername) messages.push('The username is already taken.');
             if (existingUser.email === normalizedPayload && payloadField === 'email') messages.push('The email address is already in use.');
             if (existingUser.phone === normalizedPayload && payloadField === 'phone') messages.push('The phone number is already taken.');
-            console.log(existingUser)
-            console.log(normalizedPayload)
             return sendResponse(res, 404, { errors: messages, success: false });
         }
 

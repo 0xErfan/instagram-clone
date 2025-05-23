@@ -4,31 +4,33 @@
     import { isLogin } from '@/utils';
     import { onMounted, ref } from 'vue';
     import { injectUserState } from '@/composables';
+    import useAxios from '@/utils/useAxios';
     import { useRoute } from 'vue-router';
 
-    const route = useRoute();
     const { setter, isLoggedIn, userData } = injectUserState();
     const isLoading = ref(true);
     const MIN_LOADING_TIME = 1000;
+    const route = useRoute();
 
     onMounted(async () => {
         isLoading.value = true;
+
         const startTime = Date.now();
 
         await Promise.all([
             isLogin().then(({ isLoggedIn: loginStatus, data }) => {
-                const redirectUrl = route.query?.redirectTo as string;
-                if (loginStatus) {
-                    router.replace('/');
-                    // redirectUrl && (window.location.href = redirectUrl);
-                } else {
-                    // how to remove the redirectTo parameter from the route
-                    router.replace({
-                        path: '/auth/login',
-                        query: { redirectUrl: window.location.href },
-                    });
+                if (loginStatus) return setter(data);
+
+                const fullRoute = route.fullPath;
+
+                if (fullRoute.includes('/auth/login') || fullRoute.includes('/auth/signup')) {
+                    return;
                 }
-                setter(data);
+
+                router.replace({
+                    path: '/auth/login',
+                    query: { redirectUrl: route.fullPath },
+                });
             }),
             new Promise((res) => {
                 const remainingTime = Math.max(0, MIN_LOADING_TIME - (Date.now() - startTime));
@@ -37,14 +39,23 @@
         ]);
 
         isLoading.value = false;
-        window.onkeyup = (e) => {
-            if (e.key === 'w') {
-                console.log(userData.value);
-                setter(null);
-            }
-            if (e.key === 'p') {
-                document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-                location.reload();
+
+        window.onkeyup = async (e) => {
+            switch (e.key) {
+                case 'w': {
+                    console.log(userData.value);
+                    setter(null);
+                    break;
+                }
+                case 'p': {
+                    await useAxios().post('auth/logout');
+                    location.reload();
+                    break;
+                }
+                case 'z': {
+                    router.push('/data/name/2');
+                    break;
+                }
             }
         };
     });

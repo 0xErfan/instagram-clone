@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { RouterLink } from 'vue-router';
+    import { RouterLink, useRoute } from 'vue-router';
     import { computed, ref } from 'vue';
     import FooterLinks from '../FooterLinks.vue';
     import useAxios from '@/utils/useAxios';
@@ -15,6 +15,8 @@
 
     const formData = ref<SignUpForm>({ payload: '', password: '', fullname: '', username: '' });
     const isLoading = ref(false);
+
+    const route = useRoute();
 
     const validation = computed(() => {
         let notValidKey = '';
@@ -45,10 +47,8 @@
 
         try {
             const { data, status } = await useAxios().post('/auth/signup', formData.value);
-            document.cookie = data?.token;
             // TODO: successful signup alert.
-            // TODO: check for fallback routes
-            router.replace('/');
+            router.replace((route.query?.redirectUrl as string) ?? '/');
             console.log(data, status);
         } catch (error) {
             console.log(error);
@@ -85,7 +85,7 @@
                 </div>
                 <div class="flex items-center gap-1 justify-center w-full sm:border border-[#333333] px-10 py-4 text-[#e0f1ff] text-sm">
                     Have an account?
-                    <RouterLink to="/auth/login" class="text-btn-primary font-bold">Log in</RouterLink>
+                    <RouterLink :to="{ path: '/auth/login', query: { redirectUrl: route.query?.redirectUrl } }" class="text-btn-primary font-bold">Log in</RouterLink>
                 </div>
                 <div class="flex flex-col gap-2 items-center justify-center mb-4">
                     <p class="my-2">Get the app.</p>

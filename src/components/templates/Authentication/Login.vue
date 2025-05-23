@@ -1,12 +1,14 @@
 <script setup lang="ts">
-    import { RouterLink } from 'vue-router';
+    import { RouterLink, useRoute } from 'vue-router';
     import ScreenShots from '../ScreenShots.vue';
     import { computed, ref } from 'vue';
     import FooterLinks from '../FooterLinks.vue';
     import useAxios from '@/utils/useAxios';
     import router from '@/router';
     import AuthInput from '@/components/modules/Ui/AuthInput.vue';
-    import { useUserStore } from '@/composables/userStore';
+    import { injectUserState } from '@/composables';
+
+    const { setter } = injectUserState();
 
     interface LoginForm {
         payload: string;
@@ -15,6 +17,7 @@
 
     const formData = ref<LoginForm>({ payload: '', password: '' });
     const isLoading = ref(false);
+    const route = useRoute();
 
     const validation = computed(() => {
         const notValidKey = Object.entries(formData.value).find(([_, value]) => !value.trim())?.[0] || '';
@@ -40,8 +43,8 @@
 
         try {
             const { data } = await useAxios().post('/auth/login', formData.value);
-            useUserStore().setter(data);
-            router.replace('/');
+            setter(data);
+            router.replace((route.query?.redirectUrl as string) ?? '/');
         } catch (error) {
             console.error('Login failed:', error);
         } finally {
@@ -87,7 +90,7 @@
 
                 <div class="flex items-center gap-1 justify-center w-full sm:border border-[#333333] px-10 py-4 text-[#e0f1ff] text-sm">
                     Don't have an account?
-                    <RouterLink to="/auth/signup" class="text-btn-primary font-bold">Sign up</RouterLink>
+                    <RouterLink :to="{ path: '/auth/signup', query: { redirectUrl: route.query?.redirectUrl } }" class="text-btn-primary font-bold">Sign up</RouterLink>
                 </div>
 
                 <div class="flex flex-col gap-2 items-center justify-center mb-4">
