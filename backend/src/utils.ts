@@ -106,8 +106,6 @@ const sendResponse = (
         headers['Set-Cookie'] = cookieHeader.concat('; SameSite=Lax');
     }
 
-    console.log(headers)
-
     res.writeHead(statusCode, headers);
     res.end(JSON.stringify(data));
 

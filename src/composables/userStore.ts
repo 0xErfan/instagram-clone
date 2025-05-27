@@ -10,7 +10,6 @@ export const useUserStore = () => {
 
     const setter = (data: unknown) => {
         userData.value = { ...userData.value, ...data! }
-        console.log(userData.value)
     }
 
     const logout = () => { userData.value = null }

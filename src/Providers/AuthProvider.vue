@@ -41,7 +41,6 @@
         window.onkeyup = async (e) => {
             switch (e.key) {
                 case 'w': {
-                    console.log(userData.value);
                     setter(null);
                     break;
                 }

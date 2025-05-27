@@ -49,7 +49,6 @@
             const { data, status } = await useAxios().post('/auth/signup', formData.value);
             // TODO: successful signup alert.
             router.replace((route.query?.redirectUrl as string) ?? '/');
-            console.log(data, status);
         } catch (error) {
             console.log(error);
         } finally {
