@@ -45,7 +45,7 @@ const logIn = async (req: IncomingMessage, res: ServerResponse) => {
         const userData = await UserModel.findOne(query)
         const isPasswordTrue = userData?.password && await comparePassword(password, userData.password)
 
-        if (!userData || !isPasswordTrue) return sendResponse(res, 401, { errors: ['Invalid credentials provided.'], success: false })
+        if (!userData || !isPasswordTrue) return sendResponse(res, 401, { errors: ['User not found.'], success: false })
 
         const tokenPayloadData = { _id: userData._id, phone: userData.phone, username: userData.username }
         const encryptedToken = await encryptToken(tokenPayloadData)
