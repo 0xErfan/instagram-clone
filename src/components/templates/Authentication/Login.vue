@@ -7,6 +7,7 @@
     import router from '@/router';
     import AuthInput from '@/components/modules/Ui/AuthInput.vue';
     import { injectUserState } from '@/composables';
+import { toast } from '@/utils';
 
     const { setter } = injectUserState();
 
@@ -32,6 +33,7 @@
     };
 
     const login = async () => {
+
         const { isFormNotValid, notValidKey } = validation.value;
 
         if (isFormNotValid) {
@@ -42,15 +44,20 @@
         isLoading.value = true;
 
         try {
-            const { data } = await useAxios().post('/auth/login', formData.value);
+            //TODO: refresh token haha.
+            //TODO: global catch object types(errors and other shits)
+            const { data, message } = await useAxios().post('/auth/login', formData.value);
             setter(data);
+            toast('success', message!)
             router.replace((route.query?.redirectUrl as string) ?? '/');
         } catch (error) {
-            console.error('Login failed:', error);
+            toast('error', error?.errors as string)
         } finally {
             isLoading.value = false;
         }
+
     };
+
 </script>
 
 <template>

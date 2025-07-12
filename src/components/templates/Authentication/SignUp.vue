@@ -1,10 +1,13 @@
 <script setup lang="ts">
+
     import { RouterLink, useRoute } from 'vue-router';
     import { computed, ref } from 'vue';
     import FooterLinks from '../FooterLinks.vue';
     import useAxios from '@/utils/useAxios';
     import router from '@/router';
     import AuthInput from '@/components/modules/Ui/AuthInput.vue';
+    import { toast } from '@/utils';
+    import { injectUserState } from '@/composables';
 
     interface SignUpForm {
         payload: string;
@@ -12,6 +15,8 @@
         fullname: string;
         username: string;
     }
+
+    const { setter } = injectUserState()
 
     const formData = ref<SignUpForm>({ payload: '', password: '', fullname: '', username: '' });
     const isLoading = ref(false);
@@ -36,6 +41,7 @@
     };
 
     const signup = async () => {
+
         const { isFormNotValid, notValidKey } = validation.value;
 
         if (isFormNotValid) {
@@ -46,15 +52,19 @@
         isLoading.value = true;
 
         try {
-            const { data, status } = await useAxios().post('/auth/signup', formData.value);
-            // TODO: successful signup alert.
+            const { data, message } = await useAxios().post('/auth/signup', formData.value);
+            setter(data)
+            toast('success', message!)
             router.replace((route.query?.redirectUrl as string) ?? '/');
         } catch (error) {
+            toast('error', error?.errors)
             console.log(error);
         } finally {
             isLoading.value = false;
         }
+
     };
+
 </script>
 
 <template>

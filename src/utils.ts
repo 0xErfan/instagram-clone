@@ -1,4 +1,8 @@
 import useAxios from './utils/useAxios';
+import { useToast } from "vue-toastification"
+
+import type { ToastOptions } from "vue-toastification/dist/types/types"
+type toastTypes = 'success' | 'info' | 'error' | 'warning'
 
 const isLogin = async (): Promise<{ isLoggedIn: boolean; data?: any }> => {
 
@@ -42,9 +46,19 @@ const debounceFn = <T extends (...args: any[]) => any>(fn: T, timer: number = 30
     }
 }
 
+const toast = (
+    type: toastTypes = 'success',
+    msg: string | string[] = '',
+    options?: ToastOptions & { type?: toastTypes }
+) => {
+    const toastMsg = Array.isArray(msg) ? msg.join('\n') : msg
+    useToast()[type](toastMsg, options)
+}
+
 export {
     isLogin,
     getCookieValue,
     debounceFn,
-
+    toast,
+    
 }
