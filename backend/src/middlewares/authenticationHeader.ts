@@ -31,7 +31,7 @@ const authTokenChecker = async (req: typeof IncomingMessage, res: typeof ServerR
 
         const { decryptToken } = TokenManager();
 
-        const decoded = await decryptToken(token) as any;
+        const decoded = await decryptToken(token) as { _id: string };
 
         const user = await UserModel.findById(decoded._id);
 
@@ -43,7 +43,7 @@ const authTokenChecker = async (req: typeof IncomingMessage, res: typeof ServerR
             return false;
         }
 
-        (req as any).user = user;
+        (req as Request & { user: typeof user }).user = user;
         return true;
 
     } catch (error: any) {

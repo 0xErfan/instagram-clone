@@ -1,15 +1,18 @@
 import { computed, ref } from "vue"
+import type { User } from "@/@types/user"
 
-// TODO: update types with user interface
+type UserType = null | Partial<User> 
 
-export const useUserStore = () => {
+export const useUserStore = (from: string) => {
 
-    const userData = ref<null | {}>(null)
+    if (from !== 'from provider') throw new Error('User store can only be used from provider, use injectUserState instead');
+
+    const userData = ref<UserType>(null)
 
     const isLoggedIn = computed(() => userData.value !== null)
 
-    const setter = (data: unknown) => {
-        userData.value = { ...userData.value, ...data! }
+    const setter = (data: UserType) => {
+        userData.value = { ...userData.value, ...data }
     }
 
     const logout = () => { userData.value = null }

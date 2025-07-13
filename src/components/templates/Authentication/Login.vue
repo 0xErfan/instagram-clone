@@ -1,4 +1,5 @@
 <script setup lang="ts">
+
     import { RouterLink, useRoute } from 'vue-router';
     import ScreenShots from '../ScreenShots.vue';
     import { computed, ref } from 'vue';
@@ -7,7 +8,9 @@
     import router from '@/router';
     import AuthInput from '@/components/modules/Ui/AuthInput.vue';
     import { injectUserState } from '@/composables';
-import { toast } from '@/utils';
+    import { toast } from '@/utils';
+    import { type User } from '@/@types/user'
+    import { handleError } from '@/utils/handleError';
 
     const { setter } = injectUserState();
 
@@ -45,13 +48,12 @@ import { toast } from '@/utils';
 
         try {
             //TODO: refresh token haha.
-            //TODO: global catch object types(errors and other shits)
             const { data, message } = await useAxios().post('/auth/login', formData.value);
-            setter(data);
+            setter(data?.userData as User);
             toast('success', message!)
             router.replace((route.query?.redirectUrl as string) ?? '/');
         } catch (error) {
-            toast('error', error?.errors as string)
+            handleError(error)
         } finally {
             isLoading.value = false;
         }

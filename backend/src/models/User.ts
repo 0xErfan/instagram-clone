@@ -57,13 +57,11 @@ const userSchema = new Schema({
 
 async function fixUserIndexes() {
     try {
-        //@ts-expect-error
-        await UserModel.collection.dropIndex('phone_1').catch(err => {
+        await UserModel.collection.dropIndex('phone_1').catch((err: any) => {
             if (err.codeName !== 'IndexNotFound') console.error(err);
         });
 
-        //@ts-expect-error
-        await UserModel.collection.dropIndex('email_1').catch(err => {
+        await UserModel.collection.dropIndex('email_1').catch((err: any) => {
             if (err.codeName !== 'IndexNotFound') console.error(err);
         });
 

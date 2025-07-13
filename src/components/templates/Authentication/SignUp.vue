@@ -8,7 +8,9 @@
     import AuthInput from '@/components/modules/Ui/AuthInput.vue';
     import { toast } from '@/utils';
     import { injectUserState } from '@/composables';
-
+    import { type User } from '@/@types/user'
+    import { handleError } from '@/utils/handleError';
+    
     interface SignUpForm {
         payload: string;
         password: string;
@@ -53,12 +55,11 @@
 
         try {
             const { data, message } = await useAxios().post('/auth/signup', formData.value);
-            setter(data)
+            setter(data?.userData as User)
             toast('success', message!)
             router.replace((route.query?.redirectUrl as string) ?? '/');
         } catch (error) {
-            toast('error', error?.errors)
-            console.log(error);
+            handleError(error)
         } finally {
             isLoading.value = false;
         }

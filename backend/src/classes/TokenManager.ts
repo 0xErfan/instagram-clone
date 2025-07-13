@@ -1,5 +1,5 @@
 import { Buffer } from 'buffer';
-import crypto from 'crypto';
+import crypto, { CipherGCM, DecipherGCM } from 'crypto';
 
 const TokenManager = () => {
 
@@ -14,13 +14,12 @@ const TokenManager = () => {
         encryptToken: async (data: unknown): Promise<string> => {
 
             const iv = crypto.randomBytes(12);
-            const cipher = crypto.createCipheriv(algorithm, key, iv);
+            const cipher = crypto.createCipheriv(algorithm, key, iv) as CipherGCM;
 
             const payload = JSON.stringify(data);
 
             let encrypted = cipher.update(payload, 'utf8', 'hex');
             encrypted += cipher.final('hex');
-            //@ts-expect-error
             const tag = cipher.getAuthTag();
 
             return Buffer.concat([iv, tag, Buffer.from(encrypted, 'hex')]).toString('base64url');
@@ -36,8 +35,7 @@ const TokenManager = () => {
                 const tag = data.subarray(12, 28);
                 const encrypted = data.slice(28);
 
-                const decipher = crypto.createDecipheriv(algorithm, key, iv);
-                //@ts-expect-error
+                const decipher = crypto.createDecipheriv(algorithm, key, iv) as DecipherGCM;
                 decipher.setAuthTag(tag);
 
                 const decrypted = decipher.update(encrypted.toString('hex'), 'hex', 'utf8') + decipher.final('utf8');

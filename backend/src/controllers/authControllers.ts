@@ -136,15 +136,27 @@ const signUp = async (req: IncomingMessage, res: ServerResponse) => {
 
     } catch (error) {
 
-        //@ts-ignore
-        if (error?.errors) {
-            //@ts-ignore
-            const errors = Object.values(error.errors).map(err => err?.message);
+        if (typeof error === 'object' && error !== null && 'errors' in error) {
+            const errors = Object.values((error as any).errors).map((err: any) => err?.message);
             return sendResponse(res, 404, { errors, success: false });
         }
 
-        //@ts-ignore
-        const errors = error?.code === 11000 ? Object.entries(error?.keyValue).map(([key, val]) => `${key} field value (${val}) is already taken, shall we try something else?`) : [error?.toString];
+        let errors: string[] = [];
+        
+        if (
+            typeof error === 'object' &&
+            error !== null &&
+            'code' in error &&
+            (error as any).code === 11000 &&
+            'keyValue' in error
+        ) {
+            errors = Object.entries((error as any).keyValue).map(
+                ([key, val]) => `${key} field value (${val}) is already taken, shall we try something else?`
+            );
+        } else {
+            errors = [typeof error === 'string' ? error : String(error)];
+        }
+
         sendResponse(res, 500, { errors, success: false });
 
     }

@@ -6,9 +6,10 @@
     import { onMounted, ref } from 'vue';
     import { injectUserState } from '@/composables';
     import { useRoute } from 'vue-router';
-import useAxios from '@/utils/useAxios';
+    import useAxios from '@/utils/useAxios';
     
-    const { setter, isLoggedIn, userData } = injectUserState();
+    const { setter, isLoggedIn } = injectUserState();
+    
     const isLoading = ref(true);
     const MIN_LOADING_TIME = 1000;
     const route = useRoute();
