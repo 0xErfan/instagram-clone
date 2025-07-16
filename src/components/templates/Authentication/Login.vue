@@ -82,7 +82,7 @@
                             {{ isLoading ? 'Logging in...' : 'Log in' }}
                         </button>
 
-                        <div class="relative border border-[#262626] my-3">
+                        <div class="relative border border-primary-border my-3">
                             <span class="absolute inset-0 w-12 z-10 px-3 h-5 flex items-center justify-center bg-black text-center m-auto text-secondary-text text-sm">OR</span>
                         </div>
 

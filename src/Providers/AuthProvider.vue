@@ -8,7 +8,7 @@
     import { useRoute } from 'vue-router';
     import useAxios from '@/utils/useAxios';
     
-    const { setter, isLoggedIn } = injectUserState();
+    const { setter, isLoggedIn, userData } = injectUserState();
     
     const isLoading = ref(true);
     const MIN_LOADING_TIME = 1000;
@@ -63,6 +63,9 @@
                     router.push('/data/name/2');
                     break;
                 }
+                case 'n': {
+                    console.log(userData.value)
+                }
             }
         };
     });
@@ -70,7 +73,6 @@
 </script>
 
 <template>
-    <p class="text-red-500">{{ isLoggedIn ? 'in' : 'out' }}</p>
     <Loading v-if="isLoading" />
     <template v-else>
         <slot></slot>

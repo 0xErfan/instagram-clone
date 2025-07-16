@@ -12,11 +12,12 @@ module.exports = {
       colors: {
         'btn-primary': "#0095F6",
         'secondary-bg': '#121212',
-        'secondary-text': "#A8A8A8"
+        'secondary-text': "#A8A8A8",
+        'primary-border': "#262626"
       },
       fontFamily: {
         'segoe-ui': ['Segoe UI Variable', '-apple-system', 'system-ui', 'BlinkMacSystemFont', 'Roboto', '"Helvetica Neue"', 'Arial', 'sans-serif']
-      }
+      },
     }
   },
 

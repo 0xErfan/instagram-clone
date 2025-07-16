@@ -17,6 +17,7 @@
     "tailwind": "npx tailwindcss -i ./src/assets/css/tailwind/input.css -o ./src/assets/css/tailwind/output.css --watch"
   },
   "dependencies": {
+    "@kalimahapps/vue-icons": "^1.8.1",
     "aos": "^2.3.4",
     "autoprefixer": "^10.4.20",
     "axios": "^1.7.9",
