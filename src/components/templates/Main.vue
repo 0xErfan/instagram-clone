@@ -2,6 +2,9 @@
     import NavbarLink from '@/components/modules/Ui/NavbarLink.vue'
     import { RouterLink } from 'vue-router'
     import { BxSolidHome, AkInstagramFill, AkThreadsFill, QuHamburger, IcProfileCircle, ClAddPlusSquare, FaRegHeart, FlFilledSearch, CaExplore, FlFilmstripPlay, FeSend } from '@kalimahapps/vue-icons'
+    import FooterLinks from '@/components/templates/FooterLinks.vue';
+    console.log('make the right thing or the other ones components hahahaha')
+    console.log('make the right thing or the other ones components hahahaha')
 </script>
 
 <template>
@@ -46,10 +49,17 @@
     <!--  end left bar menu  -->
 
     <!--  start page content  -->
-    <section class="w-full bg-white/90 pl-[76px] lg:pl-[245px]">
-        hi
+    <section class="w-full md:pl-[76px] lg:pl-[245px]">
+        <div class="flex items-center justify-center w-full px-3 md:px-12 2xl:px-32 *:p-3">
+            <div class="text-white bg-gray-700 w-full">main content here</div>
+            <div class="w-full max-w-[320px] bg-blue-300 hidden lg:block">right suggestions corner</div>
+        </div>
+        <FooterLinks />
     </section>
     <!--  end page content  -->
 
+    <!--  make the right thing or the other ones components hahahaha  -->
+    <!--  make the right thing or the other ones components hahahaha  -->
+    <!--  make the right thing or the other ones components hahahaha  -->
 
 </template>
