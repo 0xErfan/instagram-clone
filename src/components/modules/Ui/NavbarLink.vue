@@ -17,10 +17,10 @@
 <template>
     <component
         :is="link ? RouterLink : 'div'"
-        v-bind="link ? { to: link, exactActiveClass: 'bg-[#FFFFFF19] font-semibold' } : {}"
-        class="w-full flex items-center font-segoe-ui gap-3 rounded-lg transition-all cursor-pointer duration-300 hover:bg-[#FFFFFF19] text-[#F5F5F5] text-[16px] px-3 h-12"
+        v-bind="link ? { to: link, exactActiveClass: 'md:bg-[#FFFFFF19] font-semibold' } : {}"
+        class="w-12 md:w-full md:px-3 h-12 flex items-center justify-center md:justify-start font-segoe-ui gap-3 rounded-lg transition-all cursor-pointer duration-300 md:hover:bg-[#FFFFFF19] text-[#F5F5F5] text-[16px]"
     >
         <component :is="icon" :class="[iconSize || 'size-7', 'flex-shrink-0']" />
-        {{ text }}
+        <p class="hidden lg:inline-block">{{ text }}</p>
     </component>
 </template>
